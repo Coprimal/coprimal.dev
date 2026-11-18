@@ -20,6 +20,4 @@
   --radius-card: 14px; --radius-inner: 8px; --radius-pill: 999px; --rule-hair: 1px;
   --shadow-card: 0 28px 64px -30px oklch(4% 0.03 258 / 0.85);
   --tracking-display: -0.035em; --display-weight: 900; --weight-strong: 700;
-  /* Coprimal brand palette, shown as data in the brand section */
-  --brand-deep-navy: oklch(34.4% 0.105 258); --brand-bright-navy: oklch(49% 0.151 258); --brand-blue: oklch(57.3% 0.15 257); --brand-sky: oklch(71.8% 0.11 254); --brand-mist: oklch(96.1% 0.019 255);
 }

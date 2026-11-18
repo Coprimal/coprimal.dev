@@ -1,209 +1,134 @@
-const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Coprimal: star polygons {n/k}. Stepping k at a time around n points draws one
+// unbroken line through all of them exactly when gcd(n, k) = 1.
+const gcd = (a, b) => (b ? gcd(b, a % b) : a);
+const still = matchMedia('(prefers-reduced-motion: reduce)');
+const point = (i, n, r) => { const t = ((-90 + (360 * i) / n) * Math.PI) / 180; return [r * Math.cos(t), r * Math.sin(t)]; };
+const fmt = ([x, y]) => `${x.toFixed(4)} ${y.toFixed(4)}`;
+// the gcd(n, k) separate loops of n / gcd points each, as lists of point indices
+const loops = (n, k) => {
+  const g = gcd(n, k);
+  return Array.from({ length: g }, (_, s) => Array.from({ length: n / g + 1 }, (_, j) => (s + j * k) % n));
+};
+const pathOf = (idx, n, r) => idx.map((i, j) => (j ? 'L' : 'M') + fmt(point(i, n, r))).join('');
 
-// One reveal: tool cards settle in once as they enter
-const io = new IntersectionObserver((entries) => entries.forEach((e) => {
-  if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
-}), { rootMargin: '0px 0px -10% 0px' });
-document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+/* ---------- hero: the tools on a circle, one line through all of them ---------- */
+const ring = document.querySelector('[data-ring]');
+if (ring) {
+  const R = 0.92, SEG = 170, HOLD = 1800, FADE = 450;
+  const items = [...ring.querySelectorAll('.ring__tools li')];
+  const n = items.length;
+  const path = ring.querySelector('.ring__path');
+  const pen = ring.querySelector('.ring__pen');
+  const svg = ring.querySelector('svg');
+  const kOut = ring.querySelector('[data-ring-k]');
+  const readout = ring.querySelector('[data-ring-readout]');
+  const btn = ring.querySelector('[data-loop-toggle]');
+  items.forEach((li, i) => li.style.setProperty('--a', `${-90 + (360 * i) / n}deg`));
 
-// Filter the tools by place
-const filters = [...document.querySelectorAll('[data-filter]')];
-filters.forEach((btn) => btn.addEventListener('click', () => {
-  const f = btn.dataset.filter;
-  filters.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
-  document.querySelectorAll('.tool, .tools__label').forEach((t) => { t.hidden = f !== 'all' && t.dataset.place !== f; });
-  document.querySelector('.tools__grid').classList.toggle('is-filtered', f !== 'all');
-}));
-
-// Tabs: the ink slides under the selected tab, panels crossfade
-document.querySelectorAll('[data-switch]').forEach((root) => {
-  const tabs = [...root.querySelectorAll('[role="tab"]')];
-  const ink = root.querySelector('.tabs__ink');
-  const moveInk = (tab) => {
-    if (!ink) return;
-    ink.style.setProperty('--ink-x', `${tab.offsetLeft}px`);
-    ink.style.setProperty('--ink-s', String(tab.offsetWidth / 100));
+  const steps = [];
+  for (let k = 1; k <= Math.floor(n / 2); k++) if (gcd(n, k) === 1) steps.push(k);
+  const figure = (k) => {
+    const order = loops(n, k)[0];
+    kOut.textContent = k;
+    readout.textContent = `gcd(${n}, ${k}) = 1`;
+    svg.setAttribute('aria-label', `Diagram: the ${n} tools as points on a circle, joined by one unbroken line that steps ${k} at a time. ${n} and ${k} are coprime, so the line reaches every tool before it closes.`);
+    path.setAttribute('d', pathOf(order, n, R));
+    return order;
   };
-  const select = (tab, focus) => {
-    tabs.forEach((t) => {
-      const on = t === tab;
-      t.setAttribute('aria-selected', String(on));
-      t.tabIndex = on ? 0 : -1;
-      const panel = document.getElementById(t.getAttribute('aria-controls'));
-      panel.setAttribute('aria-hidden', String(!on));
-      panel.inert = !on;
+
+  const DRAW = n * SEG, CYCLE = DRAW + HOLD + FADE;
+  let at = Math.max(0, steps.indexOf(4));
+  let order = figure(steps[at]);
+  let clock = DRAW; // start in the hold of the figure the HTML already shows
+  let lit = n;
+  const s = { seen: false, hover: false, focus: false, held: false };
+  let last = 0, raf = 0;
+
+  const light = (count) => {
+    if (count === lit) return;
+    lit = count;
+    const on = new Set(order.slice(0, count));
+    items.forEach((li, i) => li.classList.toggle('is-dim', !on.has(i)));
+  };
+
+  const frame = (now) => {
+    clock += Math.min(50, now - (last || now));
+    last = now;
+    if (clock >= CYCLE) { clock -= CYCLE; at = (at + 1) % steps.length; order = figure(steps[at]); lit = -1; }
+    if (clock < DRAW) {
+      const p = clock / DRAW, seg = Math.min(n - 1, Math.floor(p * n)), f = p * n - seg;
+      const [ax, ay] = point(order[seg], n, R), [bx, by] = point(order[seg + 1], n, R);
+      path.style.strokeDashoffset = 1 - p;
+      path.style.opacity = 1;
+      pen.setAttribute('cx', ax + (bx - ax) * f);
+      pen.setAttribute('cy', ay + (by - ay) * f);
+      pen.style.opacity = 1;
+      light(seg + 1);
+    } else {
+      path.style.strokeDashoffset = 0;
+      pen.style.opacity = 0;
+      light(n);
+      path.style.opacity = clock < DRAW + HOLD ? 1 : 1 - (clock - DRAW - HOLD) / FADE;
+    }
+    raf = requestAnimationFrame(frame);
+  };
+
+  const sync = () => {
+    const run = s.seen && !s.hover && !s.focus && !s.held && !still.matches && !document.hidden;
+    ring.classList.toggle('is-running', run);
+    btn.textContent = s.held ? 'Play' : 'Pause';
+    if (run && !raf) { last = 0; raf = requestAnimationFrame(frame); }
+    if (!run && raf) { cancelAnimationFrame(raf); raf = 0; }
+  };
+  btn.addEventListener('click', () => { s.held = !s.held; sync(); });
+  ring.addEventListener('pointerenter', () => { s.hover = true; sync(); });
+  ring.addEventListener('pointerleave', () => { s.hover = false; sync(); });
+  // keyboard focus on a tool holds the loop; a click on the toggle must not
+  ring.addEventListener('focusin', (e) => { s.focus = e.target !== btn && e.target.matches(':focus-visible'); sync(); });
+  ring.addEventListener('focusout', () => { s.focus = false; sync(); });
+  document.addEventListener('visibilitychange', sync);
+  still.addEventListener('change', sync);
+  new IntersectionObserver(([e]) => { s.seen = e.isIntersecting; sync(); }).observe(ring);
+}
+
+/* ---------- why coprime: 12 points in steps of 5 and of 4, drawn once ---------- */
+const pair = document.querySelector('[data-pair]');
+if (pair && !still.matches && 'IntersectionObserver' in window) {
+  const R = 0.9, SEG = 150;
+  const figs = [...pair.querySelectorAll('[data-n]')].map((fig) => {
+    const n = +fig.dataset.n, k = +fig.dataset.k;
+    const svg = fig.querySelector('svg');
+    const dots = [...fig.querySelectorAll('.star__dots circle')];
+    const paths = loops(n, k).map((idx) => {
+      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      p.setAttribute('class', 'star__path');
+      p.setAttribute('pathLength', '1');
+      p.setAttribute('d', pathOf(idx, n, R));
+      return { p, idx };
     });
-    moveInk(tab);
-    if (focus) tab.focus();
-  };
-  tabs.forEach((t, i) => {
-    t.addEventListener('click', () => select(t));
-    t.addEventListener('keydown', (e) => {
-      const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-      if (d) { e.preventDefault(); select(tabs[(i + d + tabs.length) % tabs.length], true); }
+    svg.querySelectorAll('.star__path').forEach((p) => p.remove());
+    svg.prepend(...paths.map((x) => x.p));
+    return { n, dots, paths };
+  });
+  const paint = (t) => figs.forEach(({ n, dots, paths }) => {
+    const per = (n / paths.length) * SEG; // every figure takes n segments in all
+    const on = new Set();
+    paths.forEach(({ p, idx }, i) => {
+      const q = Math.min(1, Math.max(0, (t - i * per) / per));
+      p.style.strokeDashoffset = 1 - q;
+      if (q > 0 || i === 0) idx.slice(0, Math.floor(q * (idx.length - 1)) + 1).forEach((d) => on.add(d));
     });
+    dots.forEach((d, i) => d.classList.toggle('is-on', on.has(i)));
   });
-  const current = () => tabs.find((t) => t.getAttribute('aria-selected') === 'true') || tabs[0];
-  select(current());
-  addEventListener('resize', () => moveInk(current()));
-  document.fonts && document.fonts.ready.then(() => moveInk(current()));
-});
-
-// Euclid's algorithm as squares: one square per unit of each quotient, with the spiral through them
-const SVG = 'http://www.w3.org/2000/svg';
-function tiling(A, B) {
-  let x = 0, y = 0, w = A, h = B, d = 0;
-  const dirs = ['left', 'top', 'right', 'bottom'], squares = [], arcs = [];
-  while (w > 0 && h > 0) {
-    const s = Math.min(w, h);
-    let dir = dirs[d % 4];
-    if (w >= h && (dir === 'top' || dir === 'bottom')) dir = 'left';
-    if (h > w && (dir === 'left' || dir === 'right')) dir = 'top';
-    let sx = x, sy = y;
-    if (dir === 'left') { x += s; w -= s; }
-    else if (dir === 'right') { sx = x + w - s; w -= s; }
-    else if (dir === 'top') { y += s; h -= s; }
-    else { sy = y + h - s; h -= s; }
-    squares.push({ x: sx, y: sy, s });
-    const start = { left: [sx, sy + s], top: [sx, sy], right: [sx + s, sy], bottom: [sx + s, sy + s] }[dir];
-    const end = { left: [sx + s, sy], top: [sx + s, sy + s], right: [sx, sy + s], bottom: [sx, sy] }[dir];
-    if (!arcs.length) arcs.push(`M${start[0]} ${start[1]}`);
-    arcs.push(`A${s} ${s} 0 0 1 ${end[0]} ${end[1]}`);
-    d++;
-  }
-  return { squares, path: arcs.join(' ') };
-}
-
-const form = document.querySelector('[data-euclid]');
-const fig = document.querySelector('[data-euclid-tiling]');
-if (form) {
-  const steps = form.querySelector('.euclid__steps');
-  const result = form.querySelector('.euclid__result');
-  const draw = (a, b) => {
-    if (!fig) return;
-    const { squares, path } = tiling(a, b);
-    const g = fig.querySelector('.tiling__squares');
-    const caption = fig.parentElement.querySelector('figcaption');
-    if (squares.length > 80) {
-      g.replaceChildren(); fig.querySelector('.tiling__spiral').setAttribute('d', '');
-      caption.textContent = `That pair needs ${squares.length} squares, too many to draw. The steps on the left still hold.`;
-      return;
-    }
-    caption.textContent = 'Each square is one step of Euclid. When the last square is 1 by 1, the pair is coprime.';
-    fig.setAttribute('viewBox', `-0.02 -0.02 ${a + 0.04} ${b + 0.04}`);
-    fig.querySelector('title').textContent = `Euclid’s algorithm on ${a} and ${b}, drawn as squares`;
-    g.replaceChildren(...squares.map((q, i) => {
-      const r = document.createElementNS(SVG, 'rect');
-      r.setAttribute('class', 'tiling__sq' + (i === squares.length - 1 && q.s === 1 ? ' tiling__sq--one' : ''));
-      r.setAttribute('x', q.x); r.setAttribute('y', q.y); r.setAttribute('width', q.s); r.setAttribute('height', q.s);
-      r.style.setProperty('--i', i);
-      return r;
-    }));
-    fig.querySelector('.tiling__spiral').setAttribute('d', path);
-    fig.style.setProperty('--step', `${Math.max(12, Math.min(60, 700 / squares.length))}ms`);
-    fig.classList.remove('is-drawing');
-    if (!reduced) { void fig.getBoundingClientRect(); fig.classList.add('is-drawing'); }
-  };
-  const run = () => {
-    const inputs = [form.elements.a, form.elements.b];
-    const bad = inputs.find((el) => !el.checkValidity() || !Number.isInteger(Number(el.value)));
-    inputs.forEach((el) => el.toggleAttribute('aria-invalid', el === bad));
-    if (bad) { result.textContent = 'Use whole numbers from 1 to 99999.'; bad.focus(); return; }
-    const a0 = Number(form.elements.a.value), b0 = Number(form.elements.b.value);
-    let a = Math.max(a0, b0), b = Math.min(a0, b0);
-    steps.replaceChildren();
-    while (b > 0) {
-      const li = document.createElement('li');
-      li.textContent = `${a} = ${Math.floor(a / b)} × ${b} + ${a % b}`;
-      steps.append(li);
-      [a, b] = [b, a % b];
-    }
-    const code = document.createElement('code');
-    code.textContent = `gcd(${a0}, ${b0}) = ${a}`;
-    result.replaceChildren(code, a === 1 ? ', coprime.' : `, not coprime: both divide by ${a}.`);
-    draw(Math.max(a0, b0), Math.min(a0, b0));
-  };
-  form.addEventListener('submit', (e) => { e.preventDefault(); run(); });
-}
-
-// Hero: hovering a square names the step of Euclid it stands for
-const heroTiling = document.querySelector('[data-tiling]');
-const readout = document.querySelector('[data-readout]');
-if (heroTiling && readout) {
-  const rest = readout.textContent;
-  heroTiling.querySelectorAll('.tiling__sq').forEach((sq) => {
-    sq.addEventListener('pointerenter', () => { readout.textContent = sq.dataset.step; });
-    sq.addEventListener('pointerleave', () => { readout.textContent = rest; });
-  });
-}
-
-// Brand: a swatch copies its hex; its own label is the feedback
-document.querySelectorAll('[data-copy]').forEach((btn) => btn.addEventListener('click', async () => {
-  const label = btn.querySelector('.swatch__copy');
-  try {
-    await navigator.clipboard.writeText(btn.dataset.copy);
-    label.textContent = `Copied ${btn.dataset.copy}`;
-    btn.classList.add('is-copied');
-  } catch { label.textContent = 'Copy blocked by the browser'; }
-  clearTimeout(btn._t);
-  btn._t = setTimeout(() => { label.textContent = 'Copy'; btn.classList.remove('is-copied'); }, 2500);
-}));
-
-// Command palette: ⌘K or / opens it, arrows move, Enter opens, Esc closes
-const palette = document.querySelector('.palette');
-if (palette && palette.showModal) {
-  const input = palette.querySelector('.palette__input');
-  const list = palette.querySelector('.palette__list');
-  const items = [
-    ...[...document.querySelectorAll('.tool a')].map((a) => ({ name: a.querySelector('h3').textContent, note: a.querySelector('p').textContent, href: a.href, icon: a.querySelector('img').getAttribute('src') })),
-    ...[...document.querySelectorAll('main section[id] h2')].map((h) => ({ name: h.textContent.replace(/^\d+\.\s*/, ''), note: 'Section', href: `#${h.closest('section').id}` })),
-  ];
-  let shown = [], active = 0;
-  const render = () => {
-    const q = input.value.trim().toLowerCase();
-    shown = items.filter((it) => !q || `${it.name} ${it.note}`.toLowerCase().includes(q));
-    active = Math.min(active, Math.max(0, shown.length - 1));
-    list.replaceChildren(...shown.map((it, i) => {
-      const li = document.createElement('li');
-      li.setAttribute('role', 'option');
-      li.setAttribute('aria-selected', String(i === active));
-      li.id = `palette-opt-${i}`;
-      const a = document.createElement('a');
-      a.href = it.href; a.tabIndex = -1;
-      if (it.icon) { const img = document.createElement('img'); img.src = it.icon; img.alt = ''; img.width = 28; img.height = 28; a.append(img); } else a.append(document.createElement('span'));
-      const name = document.createElement('span'); name.textContent = it.name;
-      const note = document.createElement('span'); note.textContent = it.note;
-      a.append(name, note);
-      a.addEventListener('click', () => palette.close());
-      li.append(a);
-      return li;
-    }));
-    if (!shown.length) { const li = document.createElement('li'); li.className = 'palette__empty'; li.textContent = 'Nothing by that name. Try a tool, like Histq.'; list.append(li); }
-    input.setAttribute('aria-activedescendant', shown.length ? `palette-opt-${active}` : '');
-  };
-  const open = () => { if (palette.open) return; input.value = ''; active = 0; render(); palette.showModal(); input.focus(); };
-  document.querySelectorAll('[data-palette-open]').forEach((el) => el.addEventListener('click', (e) => { e.preventDefault(); open(); }));
-  addEventListener('keydown', (e) => {
-    const typing = /^(input|textarea|select)$/i.test(document.activeElement.tagName);
-    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); palette.open ? palette.close() : open(); }
-    else if (e.key === '/' && !typing && !palette.open) { e.preventDefault(); open(); }
-  });
-  input.addEventListener('input', () => { active = 0; render(); });
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-      e.preventDefault();
-      if (!shown.length) return;
-      active = (active + (e.key === 'ArrowDown' ? 1 : -1) + shown.length) % shown.length;
-      render();
-      list.children[active].scrollIntoView({ block: 'nearest' });
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      palette.close();
-    } else if (e.key === 'Enter' && shown[active]) {
-      e.preventDefault();
-      palette.close();
-      location.href = shown[active].href;
-    }
-  });
-  palette.addEventListener('click', (e) => { if (e.target === palette) palette.close(); });
+  const total = 12 * SEG;
+  pair.classList.add('is-armed');
+  paint(0);
+  const io = new IntersectionObserver(([e]) => {
+    if (!e.isIntersecting) return;
+    io.disconnect();
+    let start = 0;
+    const tick = (now) => { start ||= now; const t = now - start; paint(t); if (t < total) requestAnimationFrame(tick); else paint(total); };
+    requestAnimationFrame(tick);
+  }, { rootMargin: '0px 0px -20% 0px' });
+  io.observe(pair);
 }

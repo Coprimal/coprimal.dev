@@ -29,12 +29,11 @@
     <nav class="container" aria-label="Main">
       <div class="nav__bar">
         <a class="lockup" href="/" aria-label="Coprimal home"><img src="assets/brand/logo_white.png" width="600" height="600" alt=""><span>Coprimal</span></a>
-        <a class="search" href="#projects" data-palette-open><span>Search the tools</span><span class="search__short">Search</span><kbd>⌘ K</kbd></a>
         <ul class="nav__links">
-          <li><a href="#projects">Projects</a></li>
+          <li><a href="#projects">Tools</a></li>
           <li><a href="#coprime">Why coprime</a></li>
-          <li><a href="#brand">Brand</a></li>
           <li><a href="#ideas">Round table</a></li>
+          <li><a href="https://github.com/Coprimal">GitHub</a></li>
         </ul>
       </div>
     </nav>
@@ -42,142 +41,102 @@
 
   <main id="main">
     <section class="hero" aria-labelledby="hero-title">
-      <div class="container">
-        <div class="hero__stage">
-          <svg class="tiling tiling--land" viewBox="-0.02 -0.02 21.04 13.04" role="img" aria-labelledby="tiling-title" data-tiling><title id="tiling-title">Euclid’s algorithm on 21 and 13, drawn as squares of 13, 8, 5, 3, 2, 1 and 1. The last square is 1 by 1, so gcd(21, 13) = 1.</title><g class="tiling__sq" style="--i:0" data-step="21 = 1 × 13 + 8"><rect x="0" y="0" width="13" height="13"/><text x="0.28" y="0.55">13</text></g><g class="tiling__sq" style="--i:1" data-step="13 = 1 × 8 + 5"><rect x="13" y="0" width="8" height="8"/><text x="13.28" y="0.55">8</text></g><g class="tiling__sq" style="--i:2" data-step="8 = 1 × 5 + 3"><rect x="16" y="8" width="5" height="5"/><text x="16.28" y="8.55">5</text></g><g class="tiling__sq" style="--i:3" data-step="5 = 1 × 3 + 2"><rect x="13" y="10" width="3" height="3"/><text x="13.28" y="10.55">3</text></g><g class="tiling__sq" style="--i:4" data-step="3 = 1 × 2 + 1"><rect x="13" y="8" width="2" height="2"/><text x="13.28" y="8.55">2</text></g><g class="tiling__sq" style="--i:5" data-step="2 = 2 × 1 + 0"><rect x="15" y="8" width="1" height="1"/></g><g class="tiling__sq tiling__sq--one" style="--i:6" data-step="2 = 2 × 1 + 0"><rect x="15" y="9" width="1" height="1"/><text class="tiling__one" x="15.5" y="9.66">1</text></g><path class="tiling__spiral" d="M13 0 A8 8 0 0 1 21 8 A5 5 0 0 1 16 13 A3 3 0 0 1 13 10 A2 2 0 0 1 15 8 A1 1 0 0 1 16 9 A1 1 0 0 1 15 10" pathLength="1"/></svg>
-          <div class="hero__text">
-            <h1 id="hero-title">By devs.<br>For devs.<br>Still devs.</h1>
-            <p class="lead">We build free, open source apps and materials so solo devs can keep loving being devs in the AI era.</p>
-            <div class="actions">
-              <a class="btn btn--primary" href="#projects">Browse the projects</a>
-              <a class="btn" href="#ideas">Share an idea</a>
-            </div>
-          </div>
-          <div class="hero__side">
-            <ul class="hero__tools" aria-label="The tools"><li style="--k:0"><a href="https://histq.coprimal.dev" aria-label="Histq" title="Histq"><img src="assets/projects/histq-icon.png" width="160" height="160" alt=""></a></li><li style="--k:1"><a href="https://dblore.coprimal.dev" aria-label="Dblore" title="Dblore"><img src="assets/projects/dblore-icon.png" width="160" height="160" alt=""></a></li><li style="--k:2"><a href="https://dotlore.coprimal.dev" aria-label="dotlore" title="dotlore"><img src="assets/projects/dotlore-icon.png" width="160" height="160" alt=""></a></li><li style="--k:3"><a href="https://popguy.coprimal.dev" aria-label="PopGuy" title="PopGuy"><img src="assets/projects/popguy-icon.png" width="160" height="160" alt=""></a></li><li style="--k:4"><a href="https://echodiar.coprimal.dev" aria-label="EchoDiar" title="EchoDiar"><img src="assets/projects/echodiar-icon.png" width="160" height="160" alt=""></a></li><li style="--k:5"><a href="https://github.com/Coprimal/CmdTab" aria-label="CmdTab" title="CmdTab"><img src="assets/projects/cmdtab-icon.png" width="160" height="160" alt=""></a></li><li style="--k:6"><a href="https://github.com/Coprimal/SimpleMapper" aria-label="SimpleMapper" title="SimpleMapper"><img src="assets/projects/simplemapper-icon.png" width="160" height="160" alt=""></a></li><li style="--k:7"><a href="https://github.com/Coprimal/OpenDisplay" aria-label="OpenDisplay" title="OpenDisplay"><img src="assets/projects/opendisplay-icon.png" width="160" height="160" alt=""></a></li><li style="--k:8"><a href="https://github.com/Coprimal/FastMoji" aria-label="FastMoji" title="FastMoji"><img src="assets/projects/fastmoji-icon.png" width="160" height="160" alt=""></a></li><li style="--k:9"><a href="https://github.com/Coprimal/SegDown" aria-label="SegDown" title="SegDown"><img src="assets/projects/segdown-icon.png" width="160" height="160" alt=""></a></li><li style="--k:10"><a href="https://github.com/Coprimal/quick-clear-chrome" aria-label="Quick Clear" title="Quick Clear"><img src="assets/projects/quickclear-icon.png" width="160" height="160" alt=""></a></li></ul>
-            <p class="hero__readout"><code data-readout>gcd(dev, AI) = 1</code></p>
+      <div class="container hero__grid">
+        <div class="hero__text">
+          <h1 id="hero-title">By devs.<br>For devs.<br>Still devs.</h1>
+          <p class="lead">We build free, open source apps and materials so solo devs can keep loving being devs in the AI era.</p>
+          <div class="actions">
+            <a class="btn btn--primary" href="#projects">See the tools</a>
+            <a class="btn" href="#ideas">Share an idea</a>
           </div>
         </div>
+
+        <figure class="ring" data-ring data-loop>
+          <div class="ring__stage">
+            <svg class="ring__lines" viewBox="-1 -1 2 2" role="img" aria-label="Diagram: the tools as points on a circle, joined by one unbroken line that steps 4 points at a time. 11 and 4 are coprime, so the line reaches every tool before it closes.">
+              <path class="ring__path" d="M0 -0.92L0.6953 0.6025L-0.9106 0.1309L0.4974 -0.774L0.2592 0.8827L-0.8369 -0.3822L0.8369 -0.3822L-0.2592 0.8827L-0.4974 -0.774L0.9106 0.1309L-0.6953 0.6025L0 -0.92" pathLength="1"/>
+              <circle class="ring__pen" cx="0" cy="-0.92" r="0.016"/>
+            </svg>
+            <ul class="ring__tools" aria-label="The tools">
+              <li style="--a:-90deg"><a href="https://histq.coprimal.dev" aria-label="Histq" title="Histq"><img src="assets/projects/histq-icon.png" width="160" height="160" alt=""></a></li>
+              <li style="--a:-57.273deg"><a href="https://dblore.coprimal.dev" aria-label="Dblore" title="Dblore"><img src="assets/projects/dblore-icon.png" width="160" height="160" alt=""></a></li>
+              <li style="--a:-24.545deg"><a href="https://dotlore.coprimal.dev" aria-label="dotlore" title="dotlore"><img src="assets/projects/dotlore-icon.png" width="160" height="160" alt=""></a></li>
+              <li style="--a:8.182deg"><a href="https://echodiar.coprimal.dev" aria-label="EchoDiar" title="EchoDiar"><img src="assets/projects/echodiar-icon.png" width="160" height="160" alt=""></a></li>
+              <li style="--a:40.909deg"><a href="https://popguy.coprimal.dev" aria-label="PopGuy" title="PopGuy"><img src="assets/projects/popguy-icon.png" width="160" height="160" alt=""></a></li>
+              <li style="--a:73.636deg"><a href="https://github.com/Coprimal/CmdTab" aria-label="CmdTab" title="CmdTab"><img src="assets/projects/cmdtab-icon.png" width="160" height="160" alt=""></a></li>
+              <li style="--a:106.364deg"><a href="https://github.com/Coprimal/SimpleMapper" aria-label="SimpleMapper" title="SimpleMapper"><img src="assets/projects/simplemapper-icon.png" width="160" height="160" alt=""></a></li>
+              <li style="--a:139.091deg"><a href="https://github.com/Coprimal/OpenDisplay" aria-label="OpenDisplay" title="OpenDisplay"><img src="assets/projects/opendisplay-icon.png" width="160" height="160" alt=""></a></li>
+              <li style="--a:171.818deg"><a href="https://github.com/Coprimal/FastMoji" aria-label="FastMoji" title="FastMoji"><img src="assets/projects/fastmoji-icon.png" width="160" height="160" alt=""></a></li>
+              <li style="--a:204.545deg"><a href="https://github.com/Coprimal/SegDown" aria-label="SegDown" title="SegDown"><img src="assets/projects/segdown-icon.png" width="160" height="160" alt=""></a></li>
+              <li style="--a:237.273deg"><a href="https://github.com/Coprimal/quick-clear-chrome" aria-label="Quick Clear" title="Quick Clear"><img src="assets/projects/quickclear-icon.png" width="160" height="160" alt=""></a></li>
+            </ul>
+          </div>
+          <figcaption class="ring__foot">
+            <span>Steps of <b data-ring-k>4</b>, one line through every tool.</span>
+            <code data-ring-readout>gcd(11, 4) = 1</code>
+            <button class="loop-toggle" type="button" data-loop-toggle>Pause</button>
+          </figcaption>
+        </figure>
       </div>
     </section>
 
-    <section class="chapter tools" id="projects" aria-labelledby="map-title">
-      <div class="container">
-        <div class="head">
-          <h2 id="map-title">1. The tools, in three places</h2>
-          <p class="lead">Your Mac, your code, your browser. All free, all open source.</p>
+    <section class="why" id="coprime" aria-labelledby="coprime-title">
+      <div class="container why__grid">
+        <div class="why__text">
+          <h2 id="coprime-title">Two numbers,<br>nothing shared but 1</h2>
+          <p class="lead">That is what coprime means, and where Coprimal gets its name. Each number stays whole, and together they still draw one line. Like devs and AI.</p>
         </div>
-        <div class="filter" role="group" aria-label="Filter the tools">
-          <button type="button" class="pill" aria-pressed="true" data-filter="all">All</button>
-          <button type="button" class="pill" aria-pressed="false" data-filter="mac">On your Mac</button>
-          <button type="button" class="pill" aria-pressed="false" data-filter="code">In your code</button>
-          <button type="button" class="pill" aria-pressed="false" data-filter="web">In your browser</button>
-          <a class="tools__all" href="https://github.com/orgs/Coprimal/repositories">Every repository on GitHub</a>
-        </div>
-        <ul class="tools__grid">
-          <li class="tools__label tools__label--mac" data-place="mac" aria-hidden="true">On your Mac</li>
-          <li class="tool" data-place="mac" data-reveal style="--i:0"><a href="https://github.com/Coprimal/CmdTab"><img src="assets/projects/cmdtab-icon.png" width="160" height="160" alt="" loading="lazy"><h3>CmdTab</h3><p>Switch windows, not apps</p></a></li>
-          <li class="tool" data-place="mac" data-reveal style="--i:1"><a href="https://github.com/Coprimal/SimpleMapper"><img src="assets/projects/simplemapper-icon.png" width="160" height="160" alt="" loading="lazy"><h3>SimpleMapper</h3><p>Remap keys, no driver</p></a></li>
-          <li class="tool" data-place="mac" data-reveal style="--i:2"><a href="https://github.com/Coprimal/OpenDisplay"><img src="assets/projects/opendisplay-icon.png" width="160" height="160" alt="" loading="lazy"><h3>OpenDisplay</h3><p>HiDPI for external screens</p></a></li>
-          <li class="tool" data-place="mac" data-reveal style="--i:3"><a href="https://github.com/Coprimal/FastMoji"><img src="assets/projects/fastmoji-icon.png" width="160" height="160" alt="" loading="lazy"><h3>FastMoji</h3><p>Emoji by typing <code>::smile</code></p></a></li>
-          <li class="tool" data-place="mac" data-reveal style="--i:4"><a href="https://popguy.coprimal.dev"><img src="assets/projects/popguy-icon.png" width="160" height="160" alt="" loading="lazy"><h3>PopGuy</h3><p>AI on selected text, also Windows</p></a></li>
-          <li class="tool" data-place="mac" data-reveal style="--i:5"><a href="https://echodiar.coprimal.dev"><img src="assets/projects/echodiar-icon.png" width="160" height="160" alt="" loading="lazy"><h3>EchoDiar</h3><p>Meeting notes with who said what</p></a></li>
-          <li class="tools__label tools__label--code" data-place="code" aria-hidden="true">In your code</li>
-          <li class="tool" data-place="code" data-reveal style="--i:6"><a href="https://histq.coprimal.dev"><img src="assets/projects/histq-icon.png" width="160" height="160" alt="" loading="lazy"><h3>Histq</h3><p>Native git client for macOS</p></a></li>
-          <li class="tool" data-place="code" data-reveal style="--i:7"><a href="https://dblore.coprimal.dev"><img src="assets/projects/dblore-icon.png" width="160" height="160" alt="" loading="lazy"><h3>Dblore</h3><p>Database notebooks and SQL</p></a></li>
-          <li class="tool" data-place="code" data-reveal style="--i:8"><a href="https://dotlore.coprimal.dev"><img src="assets/projects/dotlore-icon.png" width="160" height="160" alt="" loading="lazy"><h3>dotlore</h3><p>Sync the AI config git ignores</p></a></li>
-          <li class="tools__label tools__label--web" data-place="web" aria-hidden="true">In your browser</li>
-          <li class="tool" data-place="web" data-reveal style="--i:9"><a href="https://github.com/Coprimal/SegDown"><img src="assets/projects/segdown-icon.png" width="160" height="160" alt="" loading="lazy"><h3>SegDown</h3><p>Download only the parts you mark</p></a></li>
-          <li class="tool" data-place="web" data-reveal style="--i:10"><a href="https://github.com/Coprimal/quick-clear-chrome"><img src="assets/projects/quickclear-icon.png" width="160" height="160" alt="" loading="lazy"><h3>Quick Clear</h3><p>Wipe history in one click</p></a></li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="chapter work" aria-labelledby="work-title">
-      <div class="container">
-        <div class="head head--split">
-          <h2 id="work-title">2. Histq, dotlore, CmdTab, Quick Clear</h2>
-        </div>
-        <div class="switch" data-switch>
-          <div class="tabs" role="tablist" aria-label="Pick a project">
-            <span class="tabs__ink" aria-hidden="true"></span>
-            <button type="button" role="tab" id="tab-histq" aria-controls="panel-histq" aria-selected="true">Histq</button>
-            <button type="button" role="tab" id="tab-dotlore" aria-controls="panel-dotlore" aria-selected="false" tabindex="-1">dotlore</button>
-            <button type="button" role="tab" id="tab-cmdtab" aria-controls="panel-cmdtab" aria-selected="false" tabindex="-1">CmdTab</button>
-            <button type="button" role="tab" id="tab-quickclear" aria-controls="panel-quickclear" aria-selected="false" tabindex="-1">Quick Clear</button>
-          </div>
-          <div class="panels">
-            <div class="panel" role="tabpanel" id="panel-histq" aria-labelledby="tab-histq">
-              <figure class="shot" data-slot="histq" data-kind="product" data-alt="Histq main window: commit graph, branches sidebar and commit details">
-                <img src="assets/projects/histq-shot.webp" width="2400" height="1456" alt="Histq showing a commit graph, the branch list and one commit's details" loading="lazy">
-              </figure>
-              <div class="panel__foot">
-                <p>Commit graph, line staging and rebase, on your own git.</p>
-                <p class="panel__links"><a href="https://histq.coprimal.dev">histq.coprimal.dev</a> <a href="https://github.com/Coprimal/Histq">Source</a></p>
-              </div>
-            </div>
-            <div class="panel" role="tabpanel" id="panel-dotlore" aria-labelledby="tab-dotlore">
-              <figure class="shot" data-slot="dotlore" data-kind="product" data-alt="dotlore window: projects, synced entries and a settings.json open">
-                <img src="assets/projects/dotlore-shot.webp" width="2273" height="1504" alt="dotlore listing a project's .claude folder with settings.json open" loading="lazy">
-              </figure>
-              <div class="panel__foot">
-                <p>Your <code>.claude/</code> follows you between Macs, outside git.</p>
-                <p class="panel__links"><a href="https://dotlore.coprimal.dev">dotlore.coprimal.dev</a> <a href="https://github.com/Coprimal/dotlore">Source</a></p>
-              </div>
-            </div>
-            <div class="panel" role="tabpanel" id="panel-cmdtab" aria-labelledby="tab-cmdtab">
-              <figure class="shot" data-slot="cmdtab" data-kind="product" data-alt="CmdTab switcher over the desktop, one thumbnail per window">
-                <img src="assets/projects/cmdtab-shot.webp" width="1600" height="934" alt="CmdTab's switcher with one thumbnail for each open window" loading="lazy">
-              </figure>
-              <div class="panel__foot">
-                <p>One entry per window, with thumbnails and titles.</p>
-                <p class="panel__links"><a href="https://github.com/Coprimal/CmdTab">Source and download</a></p>
-              </div>
-            </div>
-            <div class="panel" role="tabpanel" id="panel-quickclear" aria-labelledby="tab-quickclear">
-              <figure class="shot" data-slot="quickclear" data-kind="product" data-alt="Quick Clear popup in light and dark themes">
-                <img src="assets/projects/quickclear-shot.webp" width="1720" height="1326" alt="The Quick Clear popup in its light and dark themes" loading="lazy">
-              </figure>
-              <div class="panel__foot">
-                <p>History, downloads and site data, gone in one click.</p>
-                <p class="panel__links"><a href="https://github.com/Coprimal/quick-clear-chrome">Source and download</a></p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="chapter coprime band" id="coprime" aria-labelledby="coprime-title">
-      <div class="container">
-        <div class="head head--split">
-          <h2 id="coprime-title">3. Two numbers that share only 1</h2>
-          <p class="lead">Coprime numbers keep their own factors and still fit together. So can devs and AI.</p>
-        </div>
-        <div class="euclid">
-          <form class="euclid__form" data-euclid>
-            <div class="euclid__fields">
-              <label class="cell"><span>a</span><input name="a" type="number" inputmode="numeric" min="1" max="99999" value="21" required></label>
-              <label class="cell"><span>b</span><input name="b" type="number" inputmode="numeric" min="1" max="99999" value="13" required></label>
-            </div>
-            <button class="btn" type="submit">Run Euclid</button>
-            <div class="euclid__out" aria-live="polite">
-              <ol class="euclid__steps"><li>21 = 1 × 13 + 8</li><li>13 = 1 × 8 + 5</li><li>8 = 1 × 5 + 3</li><li>5 = 1 × 3 + 2</li><li>3 = 1 × 2 + 1</li><li>2 = 2 × 1 + 0</li></ol>
-              <p class="euclid__result"><code>gcd(21, 13) = 1</code>, coprime.</p>
-            </div>
-          </form>
-          <figure class="euclid__fig">
-            <svg class="tiling tiling--work" viewBox="-0.02 -0.02 21.04 13.04" role="img" aria-labelledby="orchard-title" data-euclid-tiling><title id="orchard-title">Euclid’s algorithm on 21 and 13, drawn as squares</title><g class="tiling__squares"><rect class="tiling__sq" style="--i:0" x="0" y="0" width="13" height="13"/><rect class="tiling__sq" style="--i:1" x="13" y="0" width="8" height="8"/><rect class="tiling__sq" style="--i:2" x="16" y="8" width="5" height="5"/><rect class="tiling__sq" style="--i:3" x="13" y="10" width="3" height="3"/><rect class="tiling__sq" style="--i:4" x="13" y="8" width="2" height="2"/><rect class="tiling__sq" style="--i:5" x="15" y="8" width="1" height="1"/><rect class="tiling__sq tiling__sq--one" style="--i:6" x="15" y="9" width="1" height="1"/></g><path class="tiling__spiral" d="M0 13 A13 13 0 0 1 13 0 A8 8 0 0 1 21 8 A5 5 0 0 1 16 13 A3 3 0 0 1 13 10 A2 2 0 0 1 15 8 A1 1 0 0 1 16 9 A1 1 0 0 1 15 10" pathLength="1"/></svg>
-            <figcaption>Each square is one step of Euclid. When the last square is 1 by 1, the pair is coprime.</figcaption>
+        <div class="why__pair" data-pair>
+          <figure class="star star--one" data-n="12" data-k="5">
+            <svg viewBox="-1 -1 2 2" role="img" aria-label="Diagram: 12 points on a circle joined in steps of 5. One unbroken line reaches all 12 points.">
+              <path class="star__path" d="M0 -0.9L0.45 0.7794L-0.7794 -0.45L0.9 0L-0.7794 0.45L0.45 -0.7794L0 0.9L-0.45 -0.7794L0.7794 0.45L-0.9 0L0.7794 -0.45L-0.45 0.7794L0 -0.9" pathLength="1"/>
+              <g class="star__dots"><circle cx="0" cy="-0.9" r="0.035"/><circle cx="0.45" cy="-0.7794" r="0.035"/><circle cx="0.7794" cy="-0.45" r="0.035"/><circle cx="0.9" cy="0" r="0.035"/><circle cx="0.7794" cy="0.45" r="0.035"/><circle cx="0.45" cy="0.7794" r="0.035"/><circle cx="0" cy="0.9" r="0.035"/><circle cx="-0.45" cy="0.7794" r="0.035"/><circle cx="-0.7794" cy="0.45" r="0.035"/><circle cx="-0.9" cy="0" r="0.035"/><circle cx="-0.7794" cy="-0.45" r="0.035"/><circle cx="-0.45" cy="-0.7794" r="0.035"/></g>
+            </svg>
+            <figcaption><code>gcd(12, 5) = 1</code> One line reaches all 12 points.</figcaption>
+          </figure>
+          <figure class="star star--split" data-n="12" data-k="4">
+            <svg viewBox="-1 -1 2 2" role="img" aria-label="Diagram: 12 points on a circle joined in steps of 4. The line closes after 3 points, so it takes four separate triangles to reach them all.">
+              <path class="star__path" d="M0 -0.9L0.7794 0.45L-0.7794 0.45L0 -0.9" pathLength="1"/>
+              <path class="star__path" d="M0.45 -0.7794L0.45 0.7794L-0.9 0L0.45 -0.7794" pathLength="1"/>
+              <path class="star__path" d="M0.7794 -0.45L0 0.9L-0.7794 -0.45L0.7794 -0.45" pathLength="1"/>
+              <path class="star__path" d="M0.9 0L-0.45 0.7794L-0.45 -0.7794L0.9 0" pathLength="1"/>
+              <g class="star__dots"><circle cx="0" cy="-0.9" r="0.035"/><circle cx="0.45" cy="-0.7794" r="0.035"/><circle cx="0.7794" cy="-0.45" r="0.035"/><circle cx="0.9" cy="0" r="0.035"/><circle cx="0.7794" cy="0.45" r="0.035"/><circle cx="0.45" cy="0.7794" r="0.035"/><circle cx="0" cy="0.9" r="0.035"/><circle cx="-0.45" cy="0.7794" r="0.035"/><circle cx="-0.7794" cy="0.45" r="0.035"/><circle cx="-0.9" cy="0" r="0.035"/><circle cx="-0.7794" cy="-0.45" r="0.035"/><circle cx="-0.45" cy="-0.7794" r="0.035"/></g>
+            </svg>
+            <figcaption><code>gcd(12, 4) = 4</code> The line closes after 3 points, four times over.</figcaption>
           </figure>
         </div>
       </div>
     </section>
 
-    <section class="chapter ideas" id="ideas" aria-labelledby="ideas-title">
+    <section class="tools" id="projects" aria-labelledby="tools-title">
+      <div class="container">
+        <div class="head head--split">
+          <h2 id="tools-title">Eleven tools, numbered by primes</h2>
+          <div class="head__side">
+            <p class="lead">All free and open source, and no tool divides another.</p>
+            <p class="tools__all"><a href="https://github.com/orgs/Coprimal/repositories">Every repository on GitHub</a></p>
+          </div>
+        </div>
+        <ol class="index">
+          <li value="2"><a href="https://histq.coprimal.dev"><img src="assets/projects/histq-icon.png" width="160" height="160" alt="" loading="lazy"><h3>Histq</h3><p>A native macOS git client that drives the git you already have.</p><span class="index__where">Mac</span></a></li>
+          <li value="3"><a href="https://dblore.coprimal.dev"><img src="assets/projects/dblore-icon.png" width="160" height="160" alt="" loading="lazy"><h3>Dblore</h3><p>Work with your databases in notebooks and a database editor.</p><span class="index__where">Mac</span></a></li>
+          <li value="5"><a href="https://dotlore.coprimal.dev"><img src="assets/projects/dotlore-icon.png" width="160" height="160" alt="" loading="lazy"><h3>dotlore</h3><p>Syncs the AI config git ignores, like <code>.claude/</code>, between your Macs.</p><span class="index__where">Mac</span></a></li>
+          <li value="7"><a href="https://echodiar.coprimal.dev"><img src="assets/projects/echodiar-icon.png" width="160" height="160" alt="" loading="lazy"><h3>EchoDiar</h3><p>Offline-first meeting transcripts for Meet, Teams and Zoom, with who said what.</p><span class="index__where">Mac</span></a></li>
+          <li value="11"><a href="https://popguy.coprimal.dev"><img src="assets/projects/popguy-icon.png" width="160" height="160" alt="" loading="lazy"><h3>PopGuy</h3><p>Select any text and a little guy pops up to run AI on it.</p><span class="index__where">Mac, Windows</span></a></li>
+          <li value="13"><a href="https://github.com/Coprimal/CmdTab"><img src="assets/projects/cmdtab-icon.png" width="160" height="160" alt="" loading="lazy"><h3>CmdTab</h3><p><kbd>⌘&nbsp;Tab</kbd> through every window, with thumbnails and titles.</p><span class="index__where">Mac</span></a></li>
+          <li value="17"><a href="https://github.com/Coprimal/SimpleMapper"><img src="assets/projects/simplemapper-icon.png" width="160" height="160" alt="" loading="lazy"><h3>SimpleMapper</h3><p>Remap keys for every keyboard or just one, no driver needed.</p><span class="index__where">Mac</span></a></li>
+          <li value="19"><a href="https://github.com/Coprimal/OpenDisplay"><img src="assets/projects/opendisplay-icon.png" width="160" height="160" alt="" loading="lazy"><h3>OpenDisplay</h3><p>Flexible HiDPI scaling and control for your external screens.</p><span class="index__where">Mac</span></a></li>
+          <li value="23"><a href="https://github.com/Coprimal/FastMoji"><img src="assets/projects/fastmoji-icon.png" width="160" height="160" alt="" loading="lazy"><h3>FastMoji</h3><p>Insert emoji anywhere by typing <code>::smile</code>.</p><span class="index__where">Mac</span></a></li>
+          <li value="29"><a href="https://github.com/Coprimal/SegDown"><img src="assets/projects/segdown-icon.png" width="160" height="160" alt="" loading="lazy"><h3>SegDown</h3><p>Download a whole video, or only the time ranges you mark.</p><span class="index__where">Mac, browsers</span></a></li>
+          <li value="31"><a href="https://github.com/Coprimal/quick-clear-chrome"><img src="assets/projects/quickclear-icon.png" width="160" height="160" alt="" loading="lazy"><h3>Quick Clear</h3><p>Clear browsing and download history in one click.</p><span class="index__where">Chrome</span></a></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="ideas band" id="ideas" aria-labelledby="ideas-title">
       <div class="container ideas__grid">
         <div class="head">
-          <h2 id="ideas-title">4. Bring it to the round table</h2>
+          <h2 id="ideas-title">Bring an idea to the round table</h2>
           <p class="lead">A direction, an idea, a tool you wish existed. Threads live in <a href="https://github.com/Coprimal/round-table/discussions">Coprimal/round-table</a>.</p>
           <p class="ideas__mail">No GitHub account? Write to <a href="mailto:contact@coprimal.dev?subject=An%20idea%20for%20Coprimal">contact@coprimal.dev</a>.</p>
         </div>
@@ -200,65 +159,22 @@
         </form>
       </div>
     </section>
-
-    <section class="chapter brand band" id="brand" aria-labelledby="brand-title">
-      <div class="container">
-        <div class="head head--split">
-          <h2 id="brand-title">5. The mark, the blues and Lato</h2>
-        </div>
-        <div class="brand__grid">
-          <div class="brand__marks">
-            <figure class="tile tile--navy"><img src="assets/brand/logo_white.png" width="600" height="600" alt="The Coprimal mark in white on Deep Navy" loading="lazy"></figure>
-            <figure class="tile tile--mist"><img src="assets/brand/logo_cropped.png" width="600" height="600" alt="The Coprimal mark in its full-colour blue on Mist" loading="lazy"></figure>
-            <ul class="brand__files">
-              <li><a href="https://github.com/Coprimal/brand/raw/main/assets/logo_white.png">Logo, white (PNG)</a></li>
-              <li><a href="https://github.com/Coprimal/brand/raw/main/assets/logo_cropped.png">Logo, colour (PNG)</a></li>
-              <li><a href="https://github.com/Coprimal/brand/blob/main/Coprimal_Brand_Identity.pdf">Brand identity (PDF)</a></li>
-              <li><a href="https://github.com/Coprimal/brand">Every asset, on GitHub</a></li>
-            </ul>
-          </div>
-          <ul class="swatches" aria-label="The Coprimal palette">
-            <li><button type="button" class="swatch" data-copy="#11376e"><span class="swatch__chip sw--deep" aria-hidden="true"></span><span class="swatch__name">Deep Navy</span><code>#11376e</code><span class="swatch__where">The social avatar</span><span class="swatch__copy" aria-live="polite">Copy</span></button></li>
-            <li><button type="button" class="swatch" data-copy="#225db4"><span class="swatch__chip sw--bright" aria-hidden="true"></span><span class="swatch__name">Bright Navy</span><code>#225db4</code><span class="swatch__where">App icon, the lockup tile</span><span class="swatch__copy" aria-live="polite">Copy</span></button></li>
-            <li><button type="button" class="swatch" data-copy="#3977cf"><span class="swatch__chip sw--blue" aria-hidden="true"></span><span class="swatch__name">Blue</span><code>#3977cf</code><span class="swatch__where">The full-colour mark</span><span class="swatch__copy" aria-live="polite">Copy</span></button></li>
-            <li><button type="button" class="swatch" data-copy="#73a7e8"><span class="swatch__chip sw--sky" aria-hidden="true"></span><span class="swatch__name">Sky</span><code>#73a7e8</code><span class="swatch__where">The full-colour mark</span><span class="swatch__copy" aria-live="polite">Copy</span></button></li>
-            <li><button type="button" class="swatch" data-copy="#eaf3ff"><span class="swatch__chip sw--mist" aria-hidden="true"></span><span class="swatch__name">Mist</span><code>#eaf3ff</code><span class="swatch__where">Light surfaces, the favicon tile</span><span class="swatch__copy" aria-live="polite">Copy</span></button></li>
-            <li class="swatch swatch--type"><span class="swatch__chip sw--type" aria-hidden="true">Aa</span><span class="swatch__name">Lato</span><code>900, 400</code><span class="swatch__where">Heavy heads, regular body</span></li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
   </main>
 
-  <footer class="letter">
-    <div class="container letter__grid">
-      <div class="letter__body">
-        <p>Coprimal holds the open source projects my friends and I build for solo devs and self-learners. It is where real devs keep building alongside AI.</p>
-        <p class="letter__sign">Anh-Thi DINH, founder<br><time datetime="2026-11">November 2026</time></p>
+  <footer class="mast">
+    <div class="container">
+      <a class="mast__mark" href="/" aria-label="Coprimal home"><img src="assets/brand/logo_white.png" width="600" height="600" alt=""><span>Coprimal</span></a>
+      <div class="mast__row">
+        <ul class="mast__links">
+          <li><a href="mailto:contact@coprimal.dev">contact@coprimal.dev</a></li>
+          <li><a href="https://github.com/Coprimal">GitHub</a></li>
+          <li><a href="https://x.com/coprimal_dev">X, @coprimal_dev</a></li>
+        </ul>
+        <p class="mast__legal">Founded by Anh-Thi DINH. © 2026 Coprimal. Each project carries its own open source license.</p>
       </div>
-      <dl class="letter__facts">
-        <div class="row"><dt>Contact</dt><dd><a href="mailto:contact@coprimal.dev">contact@coprimal.dev</a></dd></div>
-        <div class="row"><dt>Founder</dt><dd><a href="mailto:thi@coprimal.dev">thi@coprimal.dev</a> <a href="mailto:me@dinhanhthi.com">me@dinhanhthi.com</a> <a href="https://dinhanhthi.com">dinhanhthi.com</a></dd></div>
-        <div class="row"><dt>Elsewhere</dt><dd><a href="https://github.com/Coprimal">GitHub</a> <a href="https://x.com/coprimal_dev">X, @coprimal_dev</a></dd></div>
-      </dl>
-    </div>
-    <div class="container letter__legal">
-      <a class="lockup" href="/" aria-label="Coprimal home"><img src="assets/brand/logo_white.png" width="600" height="600" alt=""><span>Coprimal</span></a>
-      <p>© 2026 Coprimal. Each project carries its own open source license.</p>
     </div>
   </footer>
 
-  <dialog class="palette" aria-label="Search the tools">
-    <div class="palette__box">
-      <input class="palette__input" type="search" placeholder="Search tools and sections" aria-label="Search tools and sections" aria-controls="palette-list" autocomplete="off" spellcheck="false">
-      <ul class="palette__list" id="palette-list" role="listbox" aria-label="Results"></ul>
-      <p class="palette__hint">Enter opens, Esc closes</p>
-    </div>
-  </dialog>
-
-  <script>window.hallmarkSlots = (m) => { for (const [k, v] of Object.entries(m)) { const s = document.querySelector(`[data-slot="${k}"]`); if (!s) continue; const im = new Image(); im.src = typeof v === 'string' ? v : v.src; im.alt = (typeof v === 'object' && v.alt) || s.dataset.alt || ''; s.querySelectorAll(':scope > img').forEach((o) => o.remove()); s.prepend(im); } };
-document.querySelectorAll('[data-slot] img').forEach((i) => { if (i.complete && !i.naturalWidth) i.remove(); else i.addEventListener('error', () => i.remove(), { once: true }); });</script>
   <script src="main.js" defer></script>
 </body>
 </html>
