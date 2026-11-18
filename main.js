@@ -1,134 +1,186 @@
-// Coprimal: star polygons {n/k}. Stepping k at a time around n points draws one
-// unbroken line through all of them exactly when gcd(n, k) = 1.
-const gcd = (a, b) => (b ? gcd(b, a % b) : a);
+// Coprimal: two signals, dev on x and ai on y. The pen sits at (sin(a·t + p), sin(b·t)).
+// When a and b are coprime, one lap draws a closed figure no smaller pair repeats;
+// when they share a factor g, the pen runs a smaller figure g times over.
+const TAU = Math.PI * 2;
+const NS = 'http://www.w3.org/2000/svg';
 const still = matchMedia('(prefers-reduced-motion: reduce)');
-const point = (i, n, r) => { const t = ((-90 + (360 * i) / n) * Math.PI) / 180; return [r * Math.cos(t), r * Math.sin(t)]; };
-const fmt = ([x, y]) => `${x.toFixed(4)} ${y.toFixed(4)}`;
-// the gcd(n, k) separate loops of n / gcd points each, as lists of point indices
-const loops = (n, k) => {
-  const g = gcd(n, k);
-  return Array.from({ length: g }, (_, s) => Array.from({ length: n / g + 1 }, (_, j) => (s + j * k) % n));
+const gcd = (a, b) => (b ? gcd(b, a % b) : a);
+const C = 100, R = 84;
+const at = (a, b, p, t) => [C + R * Math.sin(a * t + p), C - R * Math.sin(b * t)];
+const curve = (a, b, p, t0 = 0, t1 = TAU) => {
+  const n = Math.max(6, Math.ceil(((t1 - t0) / TAU) * 64 * Math.max(a, b)));
+  let d = '';
+  for (let i = 0; i <= n; i++) {
+    const [x, y] = at(a, b, p, t0 + ((t1 - t0) * i) / n);
+    d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
+  }
+  return d;
 };
-const pathOf = (idx, n, r) => idx.map((i, j) => (j ? 'L' : 'M') + fmt(point(i, n, r))).join('');
+// one period of sin(k·s + p) across a 200 × 28 strip
+const wave = (k, p) => {
+  const n = 40 * k;
+  let d = '';
+  for (let i = 0; i <= n; i++) d += (i ? 'L' : 'M') + ((200 * i) / n).toFixed(1) + ' ' + (14 - 10 * Math.sin((k * TAU * i) / n + p)).toFixed(1);
+  return d;
+};
+// the phase halfway between two of the phases where the figure folds into an open arc
+const calm = (a, b) => Math.PI / 2 - ((a - 1) * Math.PI) / (2 * b);
 
-/* ---------- hero: the tools on a circle, one line through all of them ---------- */
-const ring = document.querySelector('[data-ring]');
-if (ring) {
-  const R = 0.92, SEG = 170, HOLD = 1800, FADE = 450;
-  const items = [...ring.querySelectorAll('.ring__tools li')];
-  const n = items.length;
-  const path = ring.querySelector('.ring__path');
-  const pen = ring.querySelector('.ring__pen');
-  const svg = ring.querySelector('svg');
-  const kOut = ring.querySelector('[data-ring-k]');
-  const readout = ring.querySelector('[data-ring-readout]');
-  const btn = ring.querySelector('[data-loop-toggle]');
-  items.forEach((li, i) => li.style.setProperty('--a', `${-90 + (360 * i) / n}deg`));
+/* ---------- hero: the scope, dev × ai, one loop with a pause control ---------- */
+const scope = document.querySelector('[data-scope]');
+if (scope) {
+  const PAIRS = [[3, 2], [5, 4], [2, 5], [4, 3], [1, 2], [5, 3]];
+  // the phase sways around calm(a, b), at most a quarter of π/b either way, so the figure seems
+  // to rock but never folds into an open arc (folds sit π/(2b) from calm). For 3:2 it starts at
+  // -π/8, the frame the HTML already shows.
+  const LAP = 5600, LAPS = 2, FADE = 450, TRAIL = 0.4;
+  const sway = (a, b, ms) => calm(a, b) - (Math.PI / (4 * b)) * Math.cos((TAU * ms) / (LAP * LAPS));
+  const q = (s) => scope.querySelector(s);
+  const ink = q('.scope__ink'), line = q('.scope__line'), pen = q('.scope__pen');
+  const trail = [...scope.querySelectorAll('.scope__trail')];
+  const mx = q('.scope__mx'), my = q('.scope__my');
+  const sig = (name) => ({ path: q(`[data-wave="${name}"] .signal__wave`), head: q(`[data-wave="${name}"] .signal__head`), k: q(`[data-k="${name}"]`) });
+  const dev = sig('dev'), ai = sig('ai');
+  const readout = q('[data-gcd]'), btn = q('[data-scope-toggle]');
+  let pair = 0, [a, b] = PAIRS[0], phase = sway(a, b, 0), clock = 0, last = 0, raf = 0;
 
-  const steps = [];
-  for (let k = 1; k <= Math.floor(n / 2); k++) if (gcd(n, k) === 1) steps.push(k);
-  const figure = (k) => {
-    const order = loops(n, k)[0];
-    kOut.textContent = k;
-    readout.textContent = `gcd(${n}, ${k}) = 1`;
-    svg.setAttribute('aria-label', `Diagram: the ${n} tools as points on a circle, joined by one unbroken line that steps ${k} at a time. ${n} and ${k} are coprime, so the line reaches every tool before it closes.`);
-    path.setAttribute('d', pathOf(order, n, R));
-    return order;
-  };
-
-  const DRAW = n * SEG, CYCLE = DRAW + HOLD + FADE;
-  let at = Math.max(0, steps.indexOf(4));
-  let order = figure(steps[at]);
-  let clock = DRAW; // start in the hold of the figure the HTML already shows
-  let lit = n;
-  const s = { seen: false, hover: false, focus: false, held: false };
-  let last = 0, raf = 0;
-
-  const light = (count) => {
-    if (count === lit) return;
-    lit = count;
-    const on = new Set(order.slice(0, count));
-    items.forEach((li, i) => li.classList.toggle('is-dim', !on.has(i)));
-  };
-
+  const label = () => { dev.k.textContent = a; ai.k.textContent = b; readout.textContent = `gcd(${a}, ${b}) = 1`; };
   const frame = (now) => {
-    clock += Math.min(50, now - (last || now));
+    const dt = Math.min(50, now - (last || now));
     last = now;
-    if (clock >= CYCLE) { clock -= CYCLE; at = (at + 1) % steps.length; order = figure(steps[at]); lit = -1; }
-    if (clock < DRAW) {
-      const p = clock / DRAW, seg = Math.min(n - 1, Math.floor(p * n)), f = p * n - seg;
-      const [ax, ay] = point(order[seg], n, R), [bx, by] = point(order[seg + 1], n, R);
-      path.style.strokeDashoffset = 1 - p;
-      path.style.opacity = 1;
-      pen.setAttribute('cx', ax + (bx - ax) * f);
-      pen.setAttribute('cy', ay + (by - ay) * f);
-      pen.style.opacity = 1;
-      light(seg + 1);
-    } else {
-      path.style.strokeDashoffset = 0;
-      pen.style.opacity = 0;
-      light(n);
-      path.style.opacity = clock < DRAW + HOLD ? 1 : 1 - (clock - DRAW - HOLD) / FADE;
-    }
+    clock += dt;
+    if (clock >= LAP * LAPS) { clock -= LAP * LAPS; pair = (pair + 1) % PAIRS.length; [a, b] = PAIRS[pair]; label(); }
+    phase = sway(a, b, clock);
+    const t = (clock / LAP) * TAU, span = TRAIL * TAU, s = t % TAU;
+    ink.style.opacity = Math.min(1, clock / FADE, (LAP * LAPS - clock) / FADE);
+    line.setAttribute('d', curve(a, b, phase));
+    trail.forEach((el, i) => el.setAttribute('d', curve(a, b, phase, t - span + (span * i) / trail.length, t - span + (span * (i + 1)) / trail.length)));
+    const [x, y] = at(a, b, phase, t);
+    pen.setAttribute('cx', x.toFixed(1)); pen.setAttribute('cy', y.toFixed(1));
+    mx.setAttribute('x1', x.toFixed(1)); mx.setAttribute('x2', x.toFixed(1));
+    my.setAttribute('y1', y.toFixed(1)); my.setAttribute('y2', y.toFixed(1));
+    dev.path.setAttribute('d', wave(a, phase));
+    ai.path.setAttribute('d', wave(b, 0));
+    const hx = ((200 * s) / TAU).toFixed(1);
+    for (const { head } of [dev, ai]) { head.setAttribute('x1', hx); head.setAttribute('x2', hx); }
     raf = requestAnimationFrame(frame);
   };
 
+  // once it has run, a paused scope keeps its last frame; reduced motion shows the whole figure
+  const state = { seen: false, held: false, started: false };
   const sync = () => {
-    const run = s.seen && !s.hover && !s.focus && !s.held && !still.matches && !document.hidden;
-    ring.classList.toggle('is-running', run);
-    btn.textContent = s.held ? 'Play' : 'Pause';
+    const run = state.seen && !state.held && !still.matches && !document.hidden;
+    state.started ||= run;
+    scope.classList.toggle('is-live', state.started && !still.matches);
+    btn.textContent = state.held ? 'Play' : 'Pause';
+    btn.hidden = still.matches;
     if (run && !raf) { last = 0; raf = requestAnimationFrame(frame); }
     if (!run && raf) { cancelAnimationFrame(raf); raf = 0; }
   };
-  btn.addEventListener('click', () => { s.held = !s.held; sync(); });
-  ring.addEventListener('pointerenter', () => { s.hover = true; sync(); });
-  ring.addEventListener('pointerleave', () => { s.hover = false; sync(); });
-  // keyboard focus on a tool holds the loop; a click on the toggle must not
-  ring.addEventListener('focusin', (e) => { s.focus = e.target !== btn && e.target.matches(':focus-visible'); sync(); });
-  ring.addEventListener('focusout', () => { s.focus = false; sync(); });
+  btn.addEventListener('click', () => { state.held = !state.held; sync(); });
   document.addEventListener('visibilitychange', sync);
   still.addEventListener('change', sync);
-  new IntersectionObserver(([e]) => { s.seen = e.isIntersecting; sync(); }).observe(ring);
+  new IntersectionObserver(([e]) => { state.seen = e.isIntersecting; sync(); }).observe(scope);
 }
 
-/* ---------- why coprime: 12 points in steps of 5 and of 4, drawn once ---------- */
-const pair = document.querySelector('[data-pair]');
-if (pair && !still.matches && 'IntersectionObserver' in window) {
-  const R = 0.9, SEG = 150;
-  const figs = [...pair.querySelectorAll('[data-n]')].map((fig) => {
-    const n = +fig.dataset.n, k = +fig.dataset.k;
-    const svg = fig.querySelector('svg');
-    const dots = [...fig.querySelectorAll('.star__dots circle')];
-    const paths = loops(n, k).map((idx) => {
-      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      p.setAttribute('class', 'star__path');
-      p.setAttribute('pathLength', '1');
-      p.setAttribute('d', pathOf(idx, n, R));
-      return { p, idx };
-    });
-    svg.querySelectorAll('.star__path').forEach((p) => p.remove());
-    svg.prepend(...paths.map((x) => x.p));
-    return { n, dots, paths };
+/* ---------- why coprime: three pens, one lap of t each, drawn over and over ---------- */
+const trio = document.querySelector('[data-trio]');
+const trioBtn = document.querySelector('[data-trio-toggle]');
+if (trio && 'IntersectionObserver' in window) {
+  // draw for DUR, hold the finished figures, fade them out, start again
+  const DUR = 6000, HOLD = 2000, FADE = 500, CYCLE = DUR + HOLD + FADE;
+  const figs = [...trio.querySelectorAll('[data-fig]')].map((el) => {
+    const [a, b, p] = el.dataset.fig.split(',').map(Number);
+    return { a, b, p, laps: gcd(a, b), line: el.querySelector('.mini__line'), pen: el.querySelector('.mini__pen'), lap: el.querySelector('[data-lap]') };
   });
-  const paint = (t) => figs.forEach(({ n, dots, paths }) => {
-    const per = (n / paths.length) * SEG; // every figure takes n segments in all
-    const on = new Set();
-    paths.forEach(({ p, idx }, i) => {
-      const q = Math.min(1, Math.max(0, (t - i * per) / per));
-      p.style.strokeDashoffset = 1 - q;
-      if (q > 0 || i === 0) idx.slice(0, Math.floor(q * (idx.length - 1)) + 1).forEach((d) => on.add(d));
-    });
-    dots.forEach((d, i) => d.classList.toggle('is-on', on.has(i)));
+  const paint = (k, fade) => figs.forEach((f) => {
+    f.line.style.strokeDashoffset = 1 - k;
+    f.line.style.opacity = fade;
+    const [x, y] = at(f.a, f.b, f.p, k * TAU);
+    f.pen.setAttribute('cx', x.toFixed(1)); f.pen.setAttribute('cy', y.toFixed(1));
+    f.lap.textContent = `lap ${Math.min(f.laps, Math.floor(k * f.laps) + 1)} of ${f.laps}`;
   });
-  const total = 12 * SEG;
-  pair.classList.add('is-armed');
-  paint(0);
-  const io = new IntersectionObserver(([e]) => {
-    if (!e.isIntersecting) return;
-    io.disconnect();
-    let start = 0;
-    const tick = (now) => { start ||= now; const t = now - start; paint(t); if (t < total) requestAnimationFrame(tick); else paint(total); };
-    requestAnimationFrame(tick);
-  }, { rootMargin: '0px 0px -20% 0px' });
-  io.observe(pair);
+  const state = { seen: false, held: false };
+  let clock = 0, last = 0, raf = 0;
+  const frame = (now) => {
+    clock = (clock + Math.min(50, now - (last || now))) % CYCLE;
+    last = now;
+    paint(Math.min(1, clock / DUR), clock > DUR + HOLD ? 1 - (clock - DUR - HOLD) / FADE : 1);
+    trio.classList.toggle('is-done', clock >= DUR);
+    raf = requestAnimationFrame(frame);
+  };
+  // reduced motion shows the finished figures and no control
+  const sync = () => {
+    const armed = !still.matches;
+    trio.classList.toggle('is-armed', armed);
+    trioBtn.hidden = !armed;
+    trioBtn.textContent = state.held ? 'Play' : 'Pause';
+    if (!armed) figs.forEach((f) => { f.line.style.strokeDashoffset = ''; f.line.style.opacity = ''; f.lap.textContent = `lap ${f.laps} of ${f.laps}`; });
+    const run = armed && state.seen && !state.held && !document.hidden;
+    if (run && !raf) { last = 0; raf = requestAnimationFrame(frame); }
+    if (!run && raf) { cancelAnimationFrame(raf); raf = 0; }
+  };
+  trioBtn.addEventListener('click', () => { state.held = !state.held; sync(); });
+  document.addEventListener('visibilitychange', sync);
+  still.addEventListener('change', () => { if (!still.matches) paint(Math.min(1, clock / DUR), 1); sync(); });
+  new IntersectionObserver(([e]) => { state.seen = e.isIntersecting; sync(); }, { rootMargin: '0px 0px -25% 0px' }).observe(trio);
+  paint(0, 1);
+  sync();
 }
+
+/* ---------- tools: each tool's own figure, turning only while hovered or focused ---------- */
+document.querySelectorAll('[data-orbit]').forEach((svg) => {
+  const [a, b] = svg.dataset.orbit.split(':').map(Number);
+  const path = document.createElementNS(NS, 'path');
+  svg.append(path);
+  let p = calm(a, b), raf = 0, last = 0;
+  const draw = () => path.setAttribute('d', curve(a, b, p));
+  const spin = (now) => { p += (now - (last || now)) * (TAU / 12000); last = now; draw(); raf = requestAnimationFrame(spin); };
+  const on = () => { if (still.matches || raf) return; last = 0; raf = requestAnimationFrame(spin); };
+  const off = () => { cancelAnimationFrame(raf); raf = 0; };
+  const tile = svg.closest('.tool');
+  tile.addEventListener('pointerenter', on);
+  tile.addEventListener('pointerleave', off);
+  tile.addEventListener('focusin', on);
+  tile.addEventListener('focusout', off);
+  draw();
+});
+
+// the hover glow on each tool card follows the pointer
+document.querySelectorAll('.tool').forEach((tile) => {
+  tile.addEventListener('pointermove', (e) => {
+    const r = tile.getBoundingClientRect();
+    tile.style.setProperty('--mx', `${Math.round(e.clientX - r.left)}px`);
+    tile.style.setProperty('--my', `${Math.round(e.clientY - r.top)}px`);
+  });
+});
+
+/* ---------- round table: keep the email link in step with the form ---------- */
+const composer = document.querySelector('[data-composer]');
+if (composer) {
+  const { category, title, body } = composer.elements;
+  const mail = composer.querySelector('[data-mail]');
+  const count = composer.querySelector('[data-count]');
+  const update = () => {
+    const kind = category.options[category.selectedIndex].text;
+    count.textContent = `${title.value.length}/${title.maxLength}`;
+    const subject = `[${kind}] ${title.value.trim() || 'An idea for Coprimal'}`;
+    mail.href = `mailto:contact@coprimal.dev?subject=${encodeURIComponent(subject)}${body.value.trim() ? `&body=${encodeURIComponent(body.value)}` : ''}`;
+  };
+  composer.addEventListener('input', update);
+  composer.addEventListener('change', update);
+  update();
+}
+
+/* ---------- brand: copy a colour's hex ---------- */
+document.querySelectorAll('[data-hex]').forEach((btn) => {
+  const out = btn.querySelector('.swatch__state');
+  let timer = 0;
+  btn.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(btn.dataset.hex); } catch { return; }
+    out.textContent = 'Copied';
+    btn.classList.add('is-copied');
+    clearTimeout(timer);
+    timer = setTimeout(() => { out.textContent = ''; btn.classList.remove('is-copied'); }, 1600);
+  });
+});
