@@ -112,7 +112,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 @media (min-width: 960px) { .slogan { font-size: clamp(4rem, 9vw, 7.5rem); } }
 .slogan__row { display: contents; }
-.slogan__pre { text-align: right; color: #4ade80; }
+.slogan__pre { text-align: right; color: #4dbb75; }
 .slogan__devs { color: var(--mist); }
 .hero .lead { margin-top: clamp(28px, 3vw, 40px); }
 .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
