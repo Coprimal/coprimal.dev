@@ -33,6 +33,28 @@
         <stop offset="0.55" stop-color="#73A7E8"/>
         <stop offset="1" stop-color="#EAF3FF"/>
       </linearGradient>
+      <!-- depth fog on the scope's strands behind the logo: on the turning cylinder their depth is √(1 − x²), so it fades across x alone -->
+      <linearGradient id="fog" x1="16" y1="0" x2="184" y2="0" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#fff"/>
+        <stop offset="0.025" stop-color="#fff" stop-opacity="0.81"/>
+        <stop offset="0.1" stop-color="#fff" stop-opacity="0.64"/>
+        <stop offset="0.2" stop-color="#fff" stop-opacity="0.52"/>
+        <stop offset="0.35" stop-color="#fff" stop-opacity="0.43"/>
+        <stop offset="0.5" stop-color="#fff" stop-opacity="0.4"/>
+        <stop offset="0.65" stop-color="#fff" stop-opacity="0.43"/>
+        <stop offset="0.8" stop-color="#fff" stop-opacity="0.52"/>
+        <stop offset="0.9" stop-color="#fff" stop-opacity="0.64"/>
+        <stop offset="0.975" stop-color="#fff" stop-opacity="0.81"/>
+        <stop offset="1" stop-color="#fff"/>
+      </linearGradient>
+      <mask id="behind" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+        <rect width="200" height="200" fill="url(#fog)"/>
+      </mask>
+      <!-- the soft shade the logo casts on what passes behind it -->
+      <radialGradient id="shade">
+        <stop offset="0.55" stop-color="#1B1D23" stop-opacity="0.85"/>
+        <stop offset="1" stop-color="#1B1D23" stop-opacity="0"/>
+      </radialGradient>
       <symbol id="graticule" viewBox="0 0 200 200">
         <path d="M25 0V200M0 25H200M50 0V200M0 50H200M75 0V200M0 75H200M125 0V200M0 125H200M150 0V200M0 150H200M175 0V200M0 175H200" fill="none" stroke="#73A7E8" stroke-opacity="0.1" stroke-width="0.5"/>
         <path d="M100 0V200M0 100H200" fill="none" stroke="#73A7E8" stroke-opacity="0.2" stroke-width="0.5"/>
@@ -78,8 +100,20 @@
             <svg class="scope__xy" viewBox="0 0 200 200" role="img" aria-labelledby="scope-title">
               <title id="scope-title">Two signals plotted against each other, dev across and ai up and down. Their beat counts are coprime, so the pen draws one closed figure before it repeats.</title>
               <use href="#graticule" width="200" height="200"/>
-              <g class="scope__ink">
-                <path class="scope__line" stroke="url(#ink)" d="M67.9 100.0L75.6 94.5L83.6 89.0L91.8 83.6L100.0 78.3L108.2 73.0L116.4 67.9L124.4 62.8L132.1 58.0L139.6 53.3L146.7 48.9L153.3 44.6L159.4 40.6L164.9 36.8L169.8 33.4L174.1 30.2L177.6 27.3L180.4 24.7L182.4 22.4L183.6 20.5L184.0 18.9L183.6 17.6L182.4 16.7L180.4 16.2L177.6 16.0L174.1 16.2L169.8 16.7L164.9 17.6L159.4 18.9L153.3 20.5L146.7 22.4L139.6 24.7L132.1 27.3L124.4 30.2L116.4 33.4L108.2 36.8L100.0 40.6L91.8 44.6L83.6 48.9L75.6 53.3L67.9 58.0L60.4 62.8L53.3 67.9L46.7 73.0L40.6 78.3L35.1 83.6L30.2 89.0L25.9 94.5L22.4 100.0L19.6 105.5L17.6 111.0L16.4 116.4L16.0 121.7L16.4 127.0L17.6 132.1L19.6 137.2L22.4 142.0L25.9 146.7L30.2 151.1L35.1 155.4L40.6 159.4L46.7 163.2L53.3 166.6L60.4 169.8L67.9 172.7L75.6 175.3L83.6 177.6L91.8 179.5L100.0 181.1L108.2 182.4L116.4 183.3L124.4 183.8L132.1 184.0L139.6 183.8L146.7 183.3L153.3 182.4L159.4 181.1L164.9 179.5L169.8 177.6L174.1 175.3L177.6 172.7L180.4 169.8L182.4 166.6L183.6 163.2L184.0 159.4L183.6 155.4L182.4 151.1L180.4 146.7L177.6 142.0L174.1 137.2L169.8 132.1L164.9 127.0L159.4 121.7L153.3 116.4L146.7 111.0L139.6 105.5L132.1 100.0L124.4 94.5L116.4 89.0L108.2 83.6L100.0 78.3L91.8 73.0L83.6 67.9L75.6 62.8L67.9 58.0L60.4 53.3L53.3 48.9L46.7 44.6L40.6 40.6L35.1 36.8L30.2 33.4L25.9 30.2L22.4 27.3L19.6 24.7L17.6 22.4L16.4 20.5L16.0 18.9L16.4 17.6L17.6 16.7L19.6 16.2L22.4 16.0L25.9 16.2L30.2 16.7L35.1 17.6L40.6 18.9L46.7 20.5L53.3 22.4L60.4 24.7L67.9 27.3L75.6 30.2L83.6 33.4L91.8 36.8L100.0 40.6L108.2 44.6L116.4 48.9L124.4 53.3L132.1 58.0L139.6 62.8L146.7 67.9L153.3 73.0L159.4 78.3L164.9 83.6L169.8 89.0L174.1 94.5L177.6 100.0L180.4 105.5L182.4 111.0L183.6 116.4L184.0 121.7L183.6 127.0L182.4 132.1L180.4 137.2L177.6 142.0L174.1 146.7L169.8 151.1L164.9 155.4L159.4 159.4L153.3 163.2L146.7 166.6L139.6 169.8L132.1 172.7L124.4 175.3L116.4 177.6L108.2 179.5L100.0 181.1L91.8 182.4L83.6 183.3L75.6 183.8L67.9 184.0L60.4 183.8L53.3 183.3L46.7 182.4L40.6 181.1L35.1 179.5L30.2 177.6L25.9 175.3L22.4 172.7L19.6 169.8L17.6 166.6L16.4 163.2L16.0 159.4L16.4 155.4L17.6 151.1L19.6 146.7L22.4 142.0L25.9 137.2L30.2 132.1L35.1 127.0L40.6 121.7L46.7 116.4L53.3 111.0L60.4 105.5L67.9 100.0"/>
+              <!-- the figure wound on a turning cylinder: strands behind the logo, the logo on the axis, strands in front -->
+              <g class="scope__ink" data-side="-1" mask="url(#behind)">
+                <path class="scope__line" stroke="url(#ink)" d="M184.0 18.9L183.6 17.6L182.4 16.7L180.4 16.2L177.6 16.0L174.1 16.2L169.8 16.7L164.9 17.6L159.4 18.9L153.3 20.5L146.7 22.4L139.6 24.7L132.1 27.3L124.4 30.2L116.4 33.4L108.2 36.8L100.0 40.6L91.8 44.6L83.6 48.9L75.6 53.3L67.9 58.0L60.4 62.8L53.3 67.9L46.7 73.0L40.6 78.3L35.1 83.6L30.2 89.0L25.9 94.5L22.4 100.0L19.6 105.5L17.6 111.0L16.4 116.4L16.0 121.7M184.0 159.4L183.6 155.4L182.4 151.1L180.4 146.7L177.6 142.0L174.1 137.2L169.8 132.1L164.9 127.0L159.4 121.7L153.3 116.4L146.7 111.0L139.6 105.5L132.1 100.0L124.4 94.5L116.4 89.0L108.2 83.6L100.0 78.3L91.8 73.0L83.6 67.9L75.6 62.8L67.9 58.0L60.4 53.3L53.3 48.9L46.7 44.6L40.6 40.6L35.1 36.8L30.2 33.4L25.9 30.2L22.4 27.3L19.6 24.7L17.6 22.4L16.4 20.5L16.0 18.9M184.0 121.7L183.6 127.0L182.4 132.1L180.4 137.2L177.6 142.0L174.1 146.7L169.8 151.1L164.9 155.4L159.4 159.4L153.3 163.2L146.7 166.6L139.6 169.8L132.1 172.7L124.4 175.3L116.4 177.6L108.2 179.5L100.0 181.1L91.8 182.4L83.6 183.3L75.6 183.8L67.9 184.0L60.4 183.8L53.3 183.3L46.7 182.4L40.6 181.1L35.1 179.5L30.2 177.6L25.9 175.3L22.4 172.7L19.6 169.8L17.6 166.6L16.4 163.2L16.0 159.4"/>
+                <path class="scope__trail" stroke="url(#ink)" opacity="0.12"/>
+                <path class="scope__trail" stroke="url(#ink)" opacity="0.24"/>
+                <path class="scope__trail" stroke="url(#ink)" opacity="0.4"/>
+                <path class="scope__trail" stroke="url(#ink)" opacity="0.58"/>
+                <path class="scope__trail" stroke="url(#ink)" opacity="0.78"/>
+                <path class="scope__trail" stroke="url(#ink)" opacity="1"/>
+              </g>
+              <circle cx="100" cy="102" r="42" fill="url(#shade)"/>
+              <image href="assets/brand/logo_cropped.png" x="58" y="58" width="84" height="84"/>
+              <g class="scope__ink" data-side="1">
+                <path class="scope__line" stroke="url(#ink)" d="M67.9 100.0L75.6 94.5L83.6 89.0L91.8 83.6L100.0 78.3L108.2 73.0L116.4 67.9L124.4 62.8L132.1 58.0L139.6 53.3L146.7 48.9L153.3 44.6L159.4 40.6L164.9 36.8L169.8 33.4L174.1 30.2L177.6 27.3L180.4 24.7L182.4 22.4L183.6 20.5L184.0 18.9M16.0 121.7L16.4 127.0L17.6 132.1L19.6 137.2L22.4 142.0L25.9 146.7L30.2 151.1L35.1 155.4L40.6 159.4L46.7 163.2L53.3 166.6L60.4 169.8L67.9 172.7L75.6 175.3L83.6 177.6L91.8 179.5L100.0 181.1L108.2 182.4L116.4 183.3L124.4 183.8L132.1 184.0L139.6 183.8L146.7 183.3L153.3 182.4L159.4 181.1L164.9 179.5L169.8 177.6L174.1 175.3L177.6 172.7L180.4 169.8L182.4 166.6L183.6 163.2L184.0 159.4M16.0 18.9L16.4 17.6L17.6 16.7L19.6 16.2L22.4 16.0L25.9 16.2L30.2 16.7L35.1 17.6L40.6 18.9L46.7 20.5L53.3 22.4L60.4 24.7L67.9 27.3L75.6 30.2L83.6 33.4L91.8 36.8L100.0 40.6L108.2 44.6L116.4 48.9L124.4 53.3L132.1 58.0L139.6 62.8L146.7 67.9L153.3 73.0L159.4 78.3L164.9 83.6L169.8 89.0L174.1 94.5L177.6 100.0L180.4 105.5L182.4 111.0L183.6 116.4L184.0 121.7M16.0 159.4L16.4 155.4L17.6 151.1L19.6 146.7L22.4 142.0L25.9 137.2L30.2 132.1L35.1 127.0L40.6 121.7L46.7 116.4L53.3 111.0L60.4 105.5L67.9 100.0"/>
                 <path class="scope__trail" stroke="url(#ink)" opacity="0.12"/>
                 <path class="scope__trail" stroke="url(#ink)" opacity="0.24"/>
                 <path class="scope__trail" stroke="url(#ink)" opacity="0.4"/>

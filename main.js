@@ -7,12 +7,18 @@ const still = matchMedia('(prefers-reduced-motion: reduce)');
 const gcd = (a, b) => (b ? gcd(b, a % b) : a);
 const C = 100, R = 84;
 const at = (a, b, p, t) => [C + R * Math.sin(a * t + p), C - R * Math.sin(b * t)];
-const curve = (a, b, p, t0 = 0, t1 = TAU) => {
+// Seen as a curve wound on a turning cylinder, the pen's depth is cos(a·t + p): side 1 keeps only
+// the strands in front of the cylinder's axis, -1 only those behind it, 0 the whole curve.
+const curve = (a, b, p, t0 = 0, t1 = TAU, side = 0) => {
   const n = Math.max(6, Math.ceil(((t1 - t0) / TAU) * 64 * Math.max(a, b)));
-  let d = '';
-  for (let i = 0; i <= n; i++) {
-    const [x, y] = at(a, b, p, t0 + ((t1 - t0) * i) / n);
-    d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
+  const t = (i) => t0 + ((t1 - t0) * i) / n;
+  const pt = (i) => at(a, b, p, t(i)).map((v) => v.toFixed(1)).join(' ');
+  let d = '', on = false;
+  for (let i = 1; i <= n; i++) {
+    const keep = !side || side * Math.cos((a * (t(i - 1) + t(i))) / 2 + p) >= 0;
+    if (keep && !on) d += 'M' + pt(i - 1);
+    if (keep) d += 'L' + pt(i);
+    on = keep;
   }
   return d;
 };
@@ -36,9 +42,9 @@ if (scope) {
   const LAP = 5600, LAPS = 2, FADE = 450, TRAIL = 0.4;
   const sway = (a, b, ms) => calm(a, b) - (Math.PI / (4 * b)) * Math.cos((TAU * ms) / (LAP * LAPS));
   const q = (s) => scope.querySelector(s);
-  const ink = q('.scope__ink'), line = q('.scope__line'), pen = q('.scope__pen');
-  const trail = [...scope.querySelectorAll('.scope__trail')];
-  const mx = q('.scope__mx'), my = q('.scope__my');
+  // two layers of ink, the strands behind the logo and those in front of it; the pen hops between them
+  const layers = [...scope.querySelectorAll('.scope__ink')].map((g) => ({ g, side: Number(g.dataset.side), line: g.querySelector('.scope__line'), trail: [...g.querySelectorAll('.scope__trail')] }));
+  const pen = q('.scope__pen'), mx = q('.scope__mx'), my = q('.scope__my');
   const sig = (name) => ({ path: q(`[data-wave="${name}"] .signal__wave`), head: q(`[data-wave="${name}"] .signal__head`), k: q(`[data-k="${name}"]`) });
   const dev = sig('dev'), ai = sig('ai');
   const readout = q('[data-gcd]'), btn = q('[data-scope-toggle]');
@@ -52,9 +58,14 @@ if (scope) {
     if (clock >= LAP * LAPS) { clock -= LAP * LAPS; pair = (pair + 1) % PAIRS.length; [a, b] = PAIRS[pair]; label(); }
     phase = sway(a, b, clock);
     const t = (clock / LAP) * TAU, span = TRAIL * TAU, s = t % TAU;
-    ink.style.opacity = Math.min(1, clock / FADE, (LAP * LAPS - clock) / FADE);
-    line.setAttribute('d', curve(a, b, phase));
-    trail.forEach((el, i) => el.setAttribute('d', curve(a, b, phase, t - span + (span * i) / trail.length, t - span + (span * (i + 1)) / trail.length)));
+    const fade = Math.min(1, clock / FADE, (LAP * LAPS - clock) / FADE);
+    for (const { g, side, line, trail } of layers) {
+      g.style.opacity = fade;
+      line.setAttribute('d', curve(a, b, phase, 0, TAU, side));
+      trail.forEach((el, i) => el.setAttribute('d', curve(a, b, phase, t - span + (span * i) / trail.length, t - span + (span * (i + 1)) / trail.length, side)));
+    }
+    const host = layers.find((l) => l.side * Math.cos(a * t + phase) >= 0).g;
+    if (pen.parentNode !== host) host.append(pen);
     const [x, y] = at(a, b, phase, t);
     pen.setAttribute('cx', x.toFixed(1)); pen.setAttribute('cy', y.toFixed(1));
     mx.setAttribute('x1', x.toFixed(1)); mx.setAttribute('x2', x.toFixed(1));
