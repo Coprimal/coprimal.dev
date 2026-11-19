@@ -219,6 +219,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .tool__points li::before { content: ""; position: absolute; left: 1px; top: 0.6em; width: 5px; height: 5px; border-radius: 50%; background: var(--line-2); transition: background-color 0.3s var(--ease); }
 .tool__points kbd, .tool__does kbd { font-size: 0.8em; }
 .tool__foot { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); font-size: 0.875rem; color: var(--muted); }
+.os svg { display: inline-block; width: 1.125em; height: 1.125em; margin-right: 0.4em; vertical-align: -0.2em; fill: currentColor; }
+.os__soon { opacity: 0.6; }
+.os__soon svg:first-child { margin-left: 0.35em; }
 .tool__more { position: relative; z-index: 1; flex: none; font-weight: 700; color: var(--ink); transition: color 0.3s var(--ease); }
 /* the open seat has no hue of its own: every hue turns around it */
 .tool--yours { background: var(--night-2); }
