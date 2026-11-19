@@ -164,13 +164,13 @@ button, input, select, textarea { font: inherit; color: inherit; }
 @media (min-width: 640px) { .toolgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 1024px) { .toolgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 /* Each tool has its own hue, --h in OKLCH degrees, set on the card. At rest the card carries a
-   wash of it; on hover (or keyboard focus) a gradient from that hue to its neighbour lights up,
+   wash of it; on hover (or keyboard focus) a gradient from that hue to a deeper shade of it lights up,
    turns (--ang), lines the card's edge and follows the pointer (--mx, --my, from main.js). */
 @property --ang { syntax: "<angle>"; inherits: false; initial-value: 140deg; }
 .tool {
   --h: 250;
   --c1: oklch(74% 0.15 var(--h));
-  --c2: oklch(72% 0.16 calc(var(--h) + 55));
+  --c2: oklch(56% 0.13 var(--h));
   --tint: oklch(86% 0.08 var(--h));
   --mx: 25%;
   --my: 0%;
@@ -184,7 +184,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   z-index: -1;
   background:
     radial-gradient(380px circle at var(--mx) var(--my), oklch(72% 0.16 var(--h) / 0.2), transparent 65%),
-    linear-gradient(var(--ang), oklch(42% 0.13 var(--h) / 0.7) 0%, oklch(32% 0.12 calc(var(--h) + 55) / 0.4) 42%, transparent 78%);
+    linear-gradient(var(--ang), oklch(42% 0.13 var(--h) / 0.7) 0%, oklch(32% 0.12 var(--h) / 0.4) 42%, transparent 78%);
 }
 /* a 1px gradient edge: the gradient shows only in the padding ring */
 .tool::after {
