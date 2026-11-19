@@ -11,16 +11,17 @@
   --blue: #3977cf;
   --sky: #73a7e8;
   --mist: #eaf3ff;
-  /* the page: jet black, neutral greys; the brand blues are the accents */
-  --night: #060607;
-  --night-2: #0e0e10;
-  --night-3: #161619;
-  --line: #1e1e22;
-  --line-2: #303036;
+  /* the page: soft slate, cool greys of the same hue; the brand blues are the accents */
+  --night: #23262e;
+  --night-2: #2a2e37;
+  --night-3: #323641;
+  --line: #353a45;
+  --line-2: #474d59;
   --ink: var(--mist);
-  --ink-2: #c5c7cd;
-  --muted: #8b8e97;
-  --screen: radial-gradient(120% 110% at 50% 38%, #111622 0%, #0b0d14 50%, #08090c 100%);
+  --ink-2: #c8ccd5;
+  --muted: #9499a6;
+  /* the scope screens sit a step below the page, with a faint blue glow at the centre */
+  --screen: radial-gradient(120% 110% at 50% 38%, #232a39 0%, #1e222b 50%, #1b1d23 100%);
 
   --font: "Lato", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -84,7 +85,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 /* ---------- nav ---------- */
 .nav {
   position: sticky; top: 0; z-index: 50;
-  background: rgba(6, 6, 7, 0.78);
+  background: rgba(35, 38, 46, 0.8);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
   backdrop-filter: blur(14px) saturate(140%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
@@ -111,7 +112,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 @media (min-width: 960px) { .slogan { font-size: clamp(4rem, 9vw, 7.5rem); } }
 .slogan__row { display: contents; }
-.slogan__pre { text-align: right; color: var(--sky); }
+.slogan__pre { text-align: right; color: #4ade80; }
 .slogan__devs { color: var(--mist); }
 .hero .lead { margin-top: clamp(28px, 3vw, 40px); }
 .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
@@ -196,7 +197,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 @media (hover: hover) { .tool:hover::before, .tool:hover::after { opacity: 1; --ang: 230deg; } }
 .tool__mark { position: relative; display: grid; place-items: center; width: 116px; aspect-ratio: 1; margin: -6px 0 6px -10px; }
 .tool__orbit { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-linejoin: round; opacity: 0.22; transition: opacity 0.3s var(--ease), stroke 0.3s var(--ease); }
-.tool__mark img { position: relative; width: 60px; height: 60px; object-fit: contain; filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55)); transition: transform 0.45s var(--ease); }
+.tool__mark img { position: relative; width: 60px; height: 60px; object-fit: contain; filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.35)); transition: transform 0.45s var(--ease); }
 .tool__name { color: var(--mist); text-decoration: none; transition: color 0.3s var(--ease); }
 /* at rest the cards stay black and grey; the hue shows only on hover or keyboard focus */
 .tool:focus-within .tool__orbit { stroke: var(--c1); opacity: 0.95; }
@@ -233,13 +234,13 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .tool .tool__more { color: var(--tint); }
 }
 
-/* ---------- bands: black with two soft brand-blue glows and the brand's waves (Math2IT, round table) ---------- */
+/* ---------- bands: slate with two soft brand-blue glows and the brand's waves (Math2IT, round table) ---------- */
 .band {
   position: relative; isolation: isolate; overflow: hidden; padding-block: var(--section);
   border-top: 1px solid var(--line);
   background:
-    radial-gradient(70% 90% at 88% 100%, rgba(34, 93, 180, 0.34), transparent 70%),
-    radial-gradient(50% 60% at 0% 0%, rgba(57, 119, 207, 0.18), transparent 70%),
+    radial-gradient(70% 90% at 88% 100%, rgba(34, 93, 180, 0.26), transparent 70%),
+    radial-gradient(50% 60% at 0% 0%, rgba(57, 119, 207, 0.12), transparent 70%),
     var(--night);
 }
 .band__waves { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; }
@@ -309,7 +310,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .table .lead { margin-top: 24px; }
 .table__browse { margin-top: 20px; font-weight: 700; color: var(--mist); }
 
-.composer { overflow: hidden; border: 1px solid rgba(115, 167, 232, 0.3); border-radius: var(--r-lg); background: var(--night); box-shadow: 0 40px 80px -48px rgba(0, 0, 0, 0.9); transition: border-color 0.2s var(--ease); }
+.composer { overflow: hidden; border: 1px solid rgba(115, 167, 232, 0.3); border-radius: var(--r-lg); background: var(--night); box-shadow: 0 40px 80px -48px rgba(0, 0, 0, 0.55); transition: border-color 0.2s var(--ease); }
 .composer:focus-within { border-color: var(--sky); }
 .composer__bar { padding: 12px 20px; border-bottom: 1px solid var(--line); font-size: 0.875rem; color: var(--muted); }
 .composer__bar a { color: var(--ink-2); }
@@ -326,7 +327,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .composer input { flex: 1; min-width: 0; min-height: 56px; padding: 0; border: 0; background: transparent; color: var(--mist); font: inherit; }
 .composer__count { flex: none; padding-left: 10px; font: 400 0.75rem var(--mono); color: var(--muted); }
 .composer textarea { display: block; width: 100%; min-height: 168px; padding: 16px 20px; border: 0; background: transparent; color: var(--ink-2); font: 400 0.9375rem/1.6 var(--mono); resize: vertical; }
-.composer input::placeholder, .composer textarea::placeholder { color: #6c6f78; opacity: 1; }
+.composer input::placeholder, .composer textarea::placeholder { color: #828794; opacity: 1; }
 .composer input:focus, .composer textarea:focus { outline: none; }
 .composer select:focus-visible { outline: 2px solid var(--sky); outline-offset: -2px; }
 .composer__subject:focus-within, .composer textarea:focus { background: rgba(115, 167, 232, 0.06); }
@@ -395,7 +396,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .kit__rules li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
 
 /* ---------- footer ---------- */
-.foot { padding-block: clamp(56px, 7vw, 88px) 40px; border-top: 1px solid var(--line); background: #040405; }
+.foot { padding-block: clamp(56px, 7vw, 88px) 40px; border-top: 1px solid var(--line); background: #1e2127; }
 .foot__top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px; }
 .lockup--big { gap: 14px; font-size: clamp(1.75rem, 3vw, 2.25rem); }
 .lockup--big img { width: 44px; height: 44px; }
