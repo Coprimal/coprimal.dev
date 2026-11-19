@@ -129,6 +129,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .scope__mx, .scope__my { display: none; stroke: var(--sky); stroke-width: 2; stroke-linecap: round; }
 .scope.is-live .scope__line { stroke: var(--blue); stroke-width: 1.1; opacity: 0.45; }
 .scope.is-live .scope__trail, .scope.is-live .scope__pen, .scope.is-live .scope__mx, .scope.is-live .scope__my { display: inline; }
+/* the sheen crosses the logo in 1.2 s, then waits 1.3 s; Pause holds it too */
+.scope__sheen { animation: scope-sheen 2.5s cubic-bezier(0.45, 0, 0.25, 1) 1s infinite both; }
+.scope.is-held .scope__sheen { animation-play-state: paused; }
+@keyframes scope-sheen { 0% { transform: translateX(0); } 48%, 100% { transform: translateX(120px); } }
 
 .scope__signals { display: grid; gap: 6px; margin-top: 16px; }
 .signal { display: grid; grid-template-columns: 2.4em minmax(0, 1fr) 4.6em; align-items: center; gap: 12px; font: 400 0.8125rem/1 var(--mono); color: var(--muted); }
@@ -197,15 +201,17 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .tool:focus-within::before, .tool:focus-within::after { opacity: 1; --ang: 230deg; }
 @media (hover: hover) { .tool:hover::before, .tool:hover::after { opacity: 1; --ang: 230deg; } }
 .tool__mark { position: relative; display: grid; place-items: center; width: 116px; aspect-ratio: 1; margin: -6px 0 6px -10px; }
-.tool__orbit { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-linejoin: round; opacity: 0.22; transition: opacity 0.3s var(--ease), stroke 0.3s var(--ease); }
+.tool__orbit { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-linejoin: round; stroke-opacity: 0.22; transition: stroke-opacity 0.3s var(--ease), stroke 0.3s var(--ease); }
+/* the white dot that rides each tool's figure all the time */
+.tool__dot { fill: var(--mist); stroke: none; filter: drop-shadow(0 0 3px rgba(234, 243, 255, 0.7)); }
 .tool__mark img { position: relative; width: 60px; height: 60px; object-fit: contain; filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.35)); transition: transform 0.45s var(--ease); }
 .tool__name { color: var(--mist); text-decoration: none; transition: color 0.3s var(--ease); }
 /* at rest the cards stay black and grey; the hue shows only on hover or keyboard focus */
-.tool:focus-within .tool__orbit { stroke: var(--c1); opacity: 0.95; }
+.tool:focus-within .tool__orbit { stroke: var(--c1); stroke-opacity: 0.95; }
 .tool:focus-within .tool__name, .tool:focus-within .tool__more { color: var(--tint); }
 .tool:focus-within .tool__points li::before { background: var(--c1); }
 @media (hover: hover) {
-  .tool:hover .tool__orbit { stroke: var(--c1); opacity: 0.95; }
+  .tool:hover .tool__orbit { stroke: var(--c1); stroke-opacity: 0.95; }
   .tool:hover .tool__mark img { transform: translateY(-3px) scale(1.06); }
   .tool:hover .tool__name, .tool:hover .tool__more { color: var(--tint); }
   .tool:hover .tool__points li::before { background: var(--c1); }
@@ -229,7 +235,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .tool--yours { background: var(--night-2); }
 .tool--yours::before { background: conic-gradient(from var(--ang) at 28% 22%, oklch(55% 0.14 0 / 0.32), oklch(55% 0.14 90 / 0.32), oklch(55% 0.14 180 / 0.32), oklch(55% 0.14 270 / 0.32), oklch(55% 0.14 360 / 0.32)); }
 .tool--yours::after { background: conic-gradient(from var(--ang), oklch(76% 0.15 0), oklch(76% 0.15 90), oklch(76% 0.15 180), oklch(76% 0.15 270), oklch(76% 0.15 360)); }
-.tool--yours .tool__orbit { stroke-dasharray: 3 7; stroke-linecap: round; opacity: 0.45; }
+.tool--yours .tool__orbit { stroke-dasharray: 3 7; stroke-linecap: round; stroke-opacity: 0.45; }
 /* three columns leave it alone on the last row, so there it takes the whole row, mark beside text */
 @media (min-width: 1024px) {
   .tool--yours { grid-column: 1 / -1; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 28px; align-content: center; }
@@ -242,7 +248,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 @media (hover: none), (max-width: 640px) {
   .tool::before { opacity: 0.75; --ang: 200deg; }
   .tool::after { opacity: 0.55; --ang: 200deg; }
-  .tool .tool__orbit { stroke: var(--c1); opacity: 0.8; }
+  .tool .tool__orbit { stroke: var(--c1); stroke-opacity: 0.8; }
   .tool .tool__points li::before { background: var(--c1); }
   .tool .tool__more { color: var(--tint); }
 }
@@ -458,4 +464,6 @@ html:has(.watch[open]) { overflow: hidden; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: 0.01ms !important; }
   .watch__spin { animation: watch-in 0.2s 0.15s both; }
+  .scope__sheen { animation: none; }
+  .tool__dot { display: none; }
 }

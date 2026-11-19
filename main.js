@@ -86,6 +86,7 @@ if (scope) {
     const run = state.seen && !state.held && !still.matches && !document.hidden;
     state.started ||= run;
     scope.classList.toggle('is-live', state.started && !still.matches);
+    scope.classList.toggle('is-held', state.held);
     btn.textContent = state.held ? 'Play' : 'Pause';
     btn.hidden = still.matches;
     if (run && !raf) { last = 0; raf = requestAnimationFrame(frame); }
@@ -142,22 +143,44 @@ if (trio && 'IntersectionObserver' in window) {
   sync();
 }
 
-/* ---------- tools: each tool's own figure, turning only while hovered or focused ---------- */
-document.querySelectorAll('[data-orbit]').forEach((svg) => {
+/* ---------- tools: each tool's own figure, a white dot riding it, the figure turning only while hovered or focused ---------- */
+document.querySelectorAll('[data-orbit]').forEach((svg, i) => {
   const [a, b] = svg.dataset.orbit.split(':').map(Number);
   const path = document.createElementNS(NS, 'path');
-  svg.append(path);
-  let p = calm(a, b), raf = 0, last = 0;
+  const dot = document.createElementNS(NS, 'circle');
+  dot.setAttribute('class', 'tool__dot');
+  dot.setAttribute('r', '4.5');
+  svg.append(path, dot);
+  // one lap of t takes longer on busier figures, so every dot moves at about the same pace
+  const LAP = 3000 * Math.max(a, b);
+  // each dot starts at its own point of the lap, so the grid's dots don't march in step
+  let p = calm(a, b), t = (i * 2.4) % TAU, raf = 0, last = 0, seen = false, hot = false;
   const draw = () => path.setAttribute('d', curve(a, b, p));
-  const spin = (now) => { p += (now - (last || now)) * (TAU / 12000); last = now; draw(); raf = requestAnimationFrame(spin); };
-  const on = () => { if (still.matches || raf) return; last = 0; raf = requestAnimationFrame(spin); };
-  const off = () => { cancelAnimationFrame(raf); raf = 0; };
+  const place = () => { const [x, y] = at(a, b, p, t); dot.setAttribute('cx', x.toFixed(1)); dot.setAttribute('cy', y.toFixed(1)); };
+  const frame = (now) => {
+    const dt = Math.min(50, now - (last || now));
+    last = now;
+    t = (t + dt * (TAU / LAP)) % TAU;
+    if (hot) { p += dt * (TAU / 12000); draw(); }
+    place();
+    raf = requestAnimationFrame(frame);
+  };
+  const sync = () => {
+    const run = seen && !still.matches && !document.hidden;
+    if (run && !raf) { last = 0; raf = requestAnimationFrame(frame); }
+    if (!run && raf) { cancelAnimationFrame(raf); raf = 0; }
+  };
   const tile = svg.closest('.tool');
-  tile.addEventListener('pointerenter', on);
-  tile.addEventListener('pointerleave', off);
-  tile.addEventListener('focusin', on);
-  tile.addEventListener('focusout', off);
+  const heat = (on) => () => { hot = on; };
+  tile.addEventListener('pointerenter', heat(true));
+  tile.addEventListener('pointerleave', heat(false));
+  tile.addEventListener('focusin', heat(true));
+  tile.addEventListener('focusout', heat(false));
+  document.addEventListener('visibilitychange', sync);
+  still.addEventListener('change', sync);
+  new IntersectionObserver(([e]) => { seen = e.isIntersecting; sync(); }).observe(svg);
   draw();
+  place();
 });
 
 // the hover glow on each tool card follows the pointer
