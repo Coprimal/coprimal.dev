@@ -39,12 +39,12 @@ if (scope) {
   // the phase sways around calm(a, b), at most a quarter of π/b either way, so the figure seems
   // to rock but never folds into an open arc (folds sit π/(2b) from calm). For 3:2 it starts at
   // -π/8, the frame the HTML already shows.
-  const LAP = 5600, LAPS = 2, FADE = 450, TRAIL = 0.4;
+  const LAP = 5600, LAPS = 2, FADE = 450, TRAIL = 0.4, TURN = 1400;
   const sway = (a, b, ms) => calm(a, b) - (Math.PI / (4 * b)) * Math.cos((TAU * ms) / (LAP * LAPS));
   const q = (s) => scope.querySelector(s);
   // two layers of ink, the strands behind the logo and those in front of it; the pen hops between them
   const layers = [...scope.querySelectorAll('.scope__ink')].map((g) => ({ g, side: Number(g.dataset.side), line: g.querySelector('.scope__line'), trail: [...g.querySelectorAll('.scope__trail')] }));
-  const pen = q('.scope__pen'), mx = q('.scope__mx'), my = q('.scope__my');
+  const pen = q('.scope__pen'), mx = q('.scope__mx'), my = q('.scope__my'), logo = q('.scope__logo');
   const sig = (name) => ({ path: q(`[data-wave="${name}"] .signal__wave`), head: q(`[data-wave="${name}"] .signal__head`), k: q(`[data-k="${name}"]`) });
   const dev = sig('dev'), ai = sig('ai');
   const readout = q('[data-gcd]'), btn = q('[data-scope-toggle]');
@@ -66,6 +66,9 @@ if (scope) {
     }
     const host = layers.find((l) => l.side * Math.cos(a * t + phase) >= 0).g;
     if (pen.parentNode !== host) host.append(pen);
+    // as each pair ends and fades away, the logo makes one full turn, eased in and out
+    const u = Math.max(0, (clock - (LAP * LAPS - TURN)) / TURN);
+    logo.setAttribute('transform', `rotate(${(360 * (u < 0.5 ? 4 * u ** 3 : 1 - (2 - 2 * u) ** 3 / 2)).toFixed(1)} 100 100)`);
     const [x, y] = at(a, b, phase, t);
     pen.setAttribute('cx', x.toFixed(1)); pen.setAttribute('cy', y.toFixed(1));
     mx.setAttribute('x1', x.toFixed(1)); mx.setAttribute('x2', x.toFixed(1));
