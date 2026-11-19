@@ -225,6 +225,13 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .tool--yours::before { background: conic-gradient(from var(--ang) at 28% 22%, oklch(55% 0.14 0 / 0.32), oklch(55% 0.14 90 / 0.32), oklch(55% 0.14 180 / 0.32), oklch(55% 0.14 270 / 0.32), oklch(55% 0.14 360 / 0.32)); }
 .tool--yours::after { background: conic-gradient(from var(--ang), oklch(76% 0.15 0), oklch(76% 0.15 90), oklch(76% 0.15 180), oklch(76% 0.15 270), oklch(76% 0.15 360)); }
 .tool--yours .tool__orbit { stroke-dasharray: 3 7; stroke-linecap: round; opacity: 0.45; }
+/* three columns leave it alone on the last row, so there it takes the whole row, mark beside text */
+@media (min-width: 1024px) {
+  .tool--yours { grid-column: 1 / -1; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 28px; align-content: center; }
+  .tool--yours .tool__mark { grid-row: span 2; margin-block: -6px; }
+  .tool--yours h3 { align-self: end; }
+  .tool--yours .tool__does { align-self: start; max-width: 60ch; }
+}
 .tool__plus { position: relative; font-size: 2.75rem; font-weight: 400; line-height: 1; color: var(--muted); }
 /* phones and touch screens can't hover, so there every card wears its hue all the time */
 @media (hover: none), (max-width: 640px) {
