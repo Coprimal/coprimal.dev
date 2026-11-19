@@ -143,6 +143,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .scope__toggle, .trio__toggle { min-height: 36px; padding: 0 14px; border: 1px solid var(--line-2); border-radius: 999px; background: transparent; font-size: 0.875rem; font-weight: 400; color: var(--ink-2); cursor: pointer; }
 .scope__toggle:hover, .trio__toggle:hover { border-color: var(--sky); color: var(--mist); }
 .scope__toggle { margin-left: auto; }
+/* no Pause buttons on phones; reduced motion in the system settings still stops both animations */
+@media (max-width: 640px) { .scope__toggle, .trio__toggle { display: none; } }
 
 /* ---------- section heads ---------- */
 .section-head { display: grid; gap: 20px 64px; align-items: end; margin-bottom: clamp(40px, 5vw, 64px); }
@@ -222,6 +224,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .tool--yours::after { background: conic-gradient(from var(--ang), oklch(76% 0.15 0), oklch(76% 0.15 90), oklch(76% 0.15 180), oklch(76% 0.15 270), oklch(76% 0.15 360)); }
 .tool--yours .tool__orbit { stroke-dasharray: 3 7; stroke-linecap: round; opacity: 0.45; }
 .tool__plus { position: relative; font-size: 2.75rem; font-weight: 400; line-height: 1; color: var(--muted); }
+/* phones and touch screens can't hover, so there every card wears its hue all the time */
+@media (hover: none), (max-width: 640px) {
+  .tool::before { opacity: 0.75; --ang: 200deg; }
+  .tool::after { opacity: 0.55; --ang: 200deg; }
+  .tool .tool__orbit { stroke: var(--c1); opacity: 0.8; }
+  .tool .tool__points li::before { background: var(--c1); }
+  .tool .tool__more { color: var(--tint); }
+}
 
 /* ---------- bands: black with two soft brand-blue glows and the brand's waves (Math2IT, round table) ---------- */
 .band {
