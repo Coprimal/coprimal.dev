@@ -169,6 +169,26 @@ document.querySelectorAll('.tool').forEach((tile) => {
   });
 });
 
+/* ---------- hero: the intro video in a dialog; without JS the button is a plain YouTube link ---------- */
+const watch = document.querySelector('[data-watch-dialog]');
+const watchBtn = document.querySelector('[data-watch]');
+if (watch?.showModal && watchBtn) {
+  const frame = watch.querySelector('[data-watch-frame]');
+  watchBtn.addEventListener('click', (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // a modified click still opens YouTube
+    e.preventDefault();
+    watch.showModal();
+    // a fresh player on each opening: removing it on close stops the sound and leaves no history entry
+    const player = document.createElement('iframe');
+    Object.assign(player, { title: watch.querySelector('#watch-title').textContent, allow: 'autoplay; encrypted-media; picture-in-picture; fullscreen', allowFullscreen: true, referrerPolicy: 'strict-origin-when-cross-origin', src: watchBtn.dataset.watch });
+    player.addEventListener('load', () => frame.classList.add('is-loaded'), { once: true });
+    frame.append(player);
+  });
+  watch.addEventListener('close', () => { frame.querySelector('iframe')?.remove(); frame.classList.remove('is-loaded'); });
+  // a click on the backdrop lands on the dialog itself, never on its children
+  watch.addEventListener('click', (e) => { if (e.target === watch) watch.close(); });
+}
+
 /* ---------- round table: keep the email link in step with the form ---------- */
 const composer = document.querySelector('[data-composer]');
 if (composer) {
