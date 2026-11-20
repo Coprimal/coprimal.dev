@@ -106,14 +106,13 @@ if (trio && 'IntersectionObserver' in window) {
   const DUR = 6000, HOLD = 2000, FADE = 500, CYCLE = DUR + HOLD + FADE;
   const figs = [...trio.querySelectorAll('[data-fig]')].map((el) => {
     const [a, b, p] = el.dataset.fig.split(',').map(Number);
-    return { a, b, p, laps: gcd(a, b), line: el.querySelector('.mini__line'), pen: el.querySelector('.mini__pen'), lap: el.querySelector('[data-lap]') };
+    return { a, b, p, line: el.querySelector('.mini__line'), pen: el.querySelector('.mini__pen') };
   });
   const paint = (k, fade) => figs.forEach((f) => {
     f.line.style.strokeDashoffset = 1 - k;
     f.line.style.opacity = fade;
     const [x, y] = at(f.a, f.b, f.p, k * TAU);
     f.pen.setAttribute('cx', x.toFixed(1)); f.pen.setAttribute('cy', y.toFixed(1));
-    f.lap.textContent = `lap ${Math.min(f.laps, Math.floor(k * f.laps) + 1)} of ${f.laps}`;
   });
   const state = { seen: false, held: false };
   let clock = 0, last = 0, raf = 0;
@@ -130,7 +129,7 @@ if (trio && 'IntersectionObserver' in window) {
     trio.classList.toggle('is-armed', armed);
     trioBtn.hidden = !armed;
     trioBtn.textContent = state.held ? 'Play' : 'Pause';
-    if (!armed) figs.forEach((f) => { f.line.style.strokeDashoffset = ''; f.line.style.opacity = ''; f.lap.textContent = `lap ${f.laps} of ${f.laps}`; });
+    if (!armed) figs.forEach((f) => { f.line.style.strokeDashoffset = ''; f.line.style.opacity = ''; });
     const run = armed && state.seen && !state.held && !document.hidden;
     if (run && !raf) { last = 0; raf = requestAnimationFrame(frame); }
     if (!run && raf) { cancelAnimationFrame(raf); raf = 0; }
@@ -140,6 +139,57 @@ if (trio && 'IntersectionObserver' in window) {
   still.addEventListener('change', () => { if (!still.matches) paint(Math.min(1, clock / DUR), 1); sync(); });
   new IntersectionObserver(([e]) => { state.seen = e.isIntersecting; sync(); }, { rootMargin: '0px 0px -25% 0px' }).observe(trio);
   paint(0, 1);
+  sync();
+}
+
+/* ---------- playground: the visitor's own pair, drawn over one lap, then the pen keeps riding it ---------- */
+const play = document.querySelector('[data-play]');
+if (play) {
+  const DUR = 5000;
+  const inA = play.querySelector('[data-play-a]'), inB = play.querySelector('[data-play-b]');
+  const line = play.querySelector('.mini__line'), pen = play.querySelector('.mini__pen');
+  const label = play.querySelector('[data-play-gcd]'), note = play.querySelector('[data-play-note]');
+  let a = 0, b = 0, p = 0, clock = 0, last = 0, raf = 0, seen = false;
+  // a whole number from 1 to 12, or null while the field holds anything else
+  const read = (el) => { const v = el.valueAsNumber; return Number.isInteger(v) && v >= 1 && v <= 12 ? v : null; };
+  const paint = () => {
+    line.style.strokeDashoffset = still.matches ? '' : 1 - Math.min(1, clock / DUR);
+    const [x, y] = at(a, b, p, ((clock % DUR) / DUR) * TAU);
+    pen.setAttribute('cx', x.toFixed(1)); pen.setAttribute('cy', y.toFixed(1));
+  };
+  const set = () => {
+    const na = read(inA), nb = read(inB);
+    if (!na || !nb || (na === a && nb === b)) return;
+    a = na; b = nb; p = calm(a, b); clock = 0;
+    const g = gcd(a, b);
+    line.setAttribute('d', curve(a, b, p));
+    label.textContent = `gcd(${a}, ${b}) = ${g}`;
+    note.textContent = g === 1
+      ? `Coprime: one whole new ${a} : ${b} figure.`
+      : `They share ${g}: only the ${a / g} : ${b / g} figure, drawn ${g} times.`;
+    paint();
+  };
+  const frame = (now) => {
+    clock += Math.min(50, now - (last || now));
+    last = now;
+    paint();
+    raf = requestAnimationFrame(frame);
+  };
+  const sync = () => {
+    play.classList.toggle('is-armed', !still.matches);
+    const run = seen && !still.matches && !document.hidden;
+    if (run && !raf) { last = 0; raf = requestAnimationFrame(frame); }
+    if (!run && raf) { cancelAnimationFrame(raf); raf = 0; }
+    paint();
+  };
+  // on leaving a field, put back the number the figure shows
+  const tidy = () => { inA.value = a; inB.value = b; };
+  [inA, inB].forEach((el) => { el.addEventListener('input', set); el.addEventListener('change', tidy); });
+  document.addEventListener('visibilitychange', sync);
+  still.addEventListener('change', sync);
+  new IntersectionObserver(([e]) => { seen = e.isIntersecting; sync(); }).observe(play);
+  play.hidden = false;
+  set();
   sync();
 }
 
