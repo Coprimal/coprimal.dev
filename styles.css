@@ -386,45 +386,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .contact__mail { display: inline-block; margin-top: 18px; font-size: clamp(1.375rem, 2.4vw, 1.875rem); font-weight: 900; letter-spacing: -0.02em; line-height: 1.15; color: var(--mist); text-decoration-color: var(--blue); text-decoration-thickness: 2px; overflow-wrap: anywhere; }
 .contact > p { margin-top: 14px; color: var(--ink-2); }
 
-/* ---------- brand ---------- */
-.brand { padding-block: var(--section); border-top: 1px solid var(--line); }
-.logos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 0; padding: 0; list-style: none; }
-@media (min-width: 900px) { .logos { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-.logo__stage { display: grid; place-items: center; aspect-ratio: 4 / 3; border-radius: var(--r-md); }
-.logo__stage img { width: 42%; }
-.logo--mist .logo__stage { background: var(--mist); }
-.logo--navy .logo__stage { background: var(--deep); }
-.logo--white .logo__stage { background: #fff; }
-.logo--icon .logo__stage { background: var(--night-2); border: 1px solid var(--line); }
-.logo--icon .logo__stage img { width: 36%; }
-.logo p { display: flex; justify-content: space-between; gap: 12px; margin-top: 12px; font-size: 0.9375rem; color: var(--ink-2); }
-.logo p a { font-weight: 700; color: var(--sky); }
-
-.kit { display: grid; gap: 48px; margin-top: clamp(48px, 6vw, 72px); }
-@media (min-width: 960px) { .kit { grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.8fr) minmax(0, 1fr); gap: 56px; } }
-.kit h3 { font-size: 1.125rem; margin-bottom: 18px; }
-.swatches { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
-.swatch {
-  position: relative;
-  display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 14px;
-  width: 100%; padding: 8px 14px 8px 8px; border: 1px solid var(--line); border-radius: var(--r-md);
-  background: transparent; text-align: left; cursor: pointer;
-  transition: border-color 0.2s var(--ease), background-color 0.2s var(--ease);
-}
-.swatch:hover { border-color: var(--line-2); background: var(--night-2); }
-.swatch__chip { width: 40px; height: 40px; border-radius: 10px; background: var(--c); box-shadow: inset 0 0 0 1px rgba(234, 243, 255, 0.1); }
-.swatch__name { font-weight: 700; }
-.swatch code { color: var(--ink-2); }
-/* "Copied" sits over the hex while it shows */
-.swatch__state { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 0.875rem; font-weight: 700; color: var(--sky); }
-.swatch.is-copied code { visibility: hidden; }
-.kit__hint { margin-top: 12px; font-size: 0.875rem; color: var(--muted); }
-.kit__aa { font-size: 6rem; font-weight: 900; line-height: 0.9; letter-spacing: -0.04em; margin-bottom: 16px; }
-.kit__type p:not(.kit__aa), .kit__rules li { color: var(--ink-2); }
-.kit__rules ul { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
-.kit__rules li { position: relative; padding-left: 18px; }
-.kit__rules li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
-
 /* ---------- footer ---------- */
 .foot { padding-block: clamp(56px, 7vw, 88px) 40px; border-top: 1px solid var(--line); background: #1e2127; }
 .foot__top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px; }
@@ -433,6 +394,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .foot__slogan { font-weight: 700; color: var(--ink-2); }
 .foot__cols { display: flex; flex-wrap: wrap; align-items: baseline; gap: 16px 48px; margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--line); }
 .foot__cols ul { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0; padding: 0; list-style: none; }
+/* "X" is one letter, so the social links sit closer than the section links */
+.foot__cols .foot__social { column-gap: 14px; }
 .foot__cols a { color: var(--ink-2); text-decoration: none; }
 .foot__cols a:hover { color: var(--mist); text-decoration: underline; }
 .foot__mail { margin-left: auto; font-weight: 700; }

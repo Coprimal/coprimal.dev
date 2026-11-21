@@ -279,15 +279,3 @@ if (composer) {
   update();
 }
 
-/* ---------- brand: copy a colour's hex ---------- */
-document.querySelectorAll('[data-hex]').forEach((btn) => {
-  const out = btn.querySelector('.swatch__state');
-  let timer = 0;
-  btn.addEventListener('click', async () => {
-    try { await navigator.clipboard.writeText(btn.dataset.hex); } catch { return; }
-    out.textContent = 'Copied';
-    btn.classList.add('is-copied');
-    clearTimeout(timer);
-    timer = setTimeout(() => { out.textContent = ''; btn.classList.remove('is-copied'); }, 1600);
-  });
-});
