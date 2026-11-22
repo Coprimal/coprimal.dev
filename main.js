@@ -242,6 +242,27 @@ document.querySelectorAll('.tool').forEach((tile) => {
   });
 });
 
+// the version and tag come from tools.json, written at deploy by scripts/tools-json.sh;
+// tags are computed here against today, so they expire on time between deploys
+const cards = document.querySelectorAll('.tool[data-repo]');
+if (cards.length) {
+  const recent = (iso) => !!iso && Date.now() - Date.parse(iso) < 14 * 864e5;
+  const span = (className, textContent) => Object.assign(document.createElement('span'), { className, textContent });
+  fetch('tools.json')
+    .then((r) => (r.ok ? r.json() : {}))
+    .then((data) => cards.forEach((card) => {
+      const info = data[card.dataset.repo];
+      if (!info) return;
+      const tag = recent(info.created) ? 'New' : recent(info.released) ? 'Updated' : '';
+      if (!tag && !info.version) return;
+      const meta = Object.assign(document.createElement('p'), { className: 'tool__meta' });
+      if (tag) meta.append(span(`tool__tag tool__tag--${tag.toLowerCase()}`, tag));
+      if (info.version) meta.append(span('tool__ver', info.version));
+      card.append(meta);
+    }))
+    .catch(() => {});
+}
+
 /* ---------- hero: the intro video in a dialog; without JS the button is a plain YouTube link ---------- */
 const watch = document.querySelector('[data-watch-dialog]');
 const watchBtn = document.querySelector('[data-watch]');
