@@ -8,10 +8,11 @@ name: Deploy website
 on:
   push:
     branches: [main]
+  # Each tool repo's notify-site.yml dispatches this when it publishes a release (scripts/trigger-deploy.sh by hand).
   workflow_dispatch:
-  # The hourly run keeps the tool versions in tools.json current.
+  # The daily run is a safety net that keeps the tool versions in tools.json current.
   schedule:
-    - cron: "17 * * * *"
+    - cron: "17 3 * * *"
 
 permissions:
   contents: read
